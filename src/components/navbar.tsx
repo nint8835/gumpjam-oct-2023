@@ -90,11 +90,6 @@ export default function Navbar({ currentUser }: { currentUser: typeof users.$inf
         });
     }
 
-    navItems.push({
-        label: 'Test',
-        href: '/test',
-    });
-
     return (
         <header className="flex h-12 flex-row items-center justify-between border-b p-2">
             <Link href="/" className="font-bold">
