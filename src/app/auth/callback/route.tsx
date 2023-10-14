@@ -1,4 +1,7 @@
-import { DiscordOAuthConfig } from '@/lib/auth';
+import db from '@/db';
+import { users } from '@/db/schema';
+import { DiscordOAuthConfig, SessionData, SessionOptions } from '@/lib/auth';
+import { getIronSession } from 'iron-session';
 import { AuthorizationCode } from 'simple-oauth2';
 
 export async function GET(request: Request) {
@@ -24,12 +27,32 @@ export async function GET(request: Request) {
             Authorization: `Bearer ${accessToken.token.access_token}`,
         },
     });
+    const userData = await userReq.json();
 
-    const user = await userReq.json();
-
-    return new Response(JSON.stringify(user), {
-        headers: {
-            'Content-Type': 'application/json',
-        },
+    let user = await db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.id, userData.id),
     });
+
+    if (!user) {
+        user = (
+            await db
+                .insert(users)
+                .values({
+                    id: userData.id,
+                    displayName: userData.global_name || userData.username,
+                })
+                .returning()
+        )[0];
+    }
+
+    const response = new Response(null, {
+        status: 302,
+    });
+    response.headers.set('Location', parsedUrl.origin);
+
+    const session = await getIronSession<SessionData>(request, response, SessionOptions);
+    session.user = user;
+    await session.save();
+
+    return response;
 }
