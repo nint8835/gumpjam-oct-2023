@@ -1,4 +1,6 @@
+import ClientProviders from '@/components/client_providers';
 import Navbar from '@/components/navbar';
+import { ssrGetCurrentUser } from '@/lib/auth';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -8,14 +10,18 @@ export const metadata: Metadata = {
     description: 'My entry for the October 2023 Gumpjam',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+    const currentUser = await ssrGetCurrentUser();
+
     return (
         <html lang="en">
             <body className="dark min-h-screen">
-                <div className="flex min-h-screen flex-col">
-                    <Navbar />
-                    <div className="flex-1">{children}</div>
-                </div>
+                <ClientProviders>
+                    <div className="flex min-h-screen flex-col">
+                        <Navbar currentUser={currentUser} />
+                        <div className="flex-1">{children}</div>
+                    </div>
+                </ClientProviders>
             </body>
         </html>
     );
