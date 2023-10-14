@@ -2,10 +2,11 @@ import db from '@/db';
 import { users } from '@/db/schema';
 import { DiscordOAuthConfig, SessionData, SessionOptions } from '@/lib/auth';
 import { getIronSession } from 'iron-session';
+import type { NextRequest } from 'next/server';
 import { AuthorizationCode } from 'simple-oauth2';
 
-export async function GET(request: Request) {
-    const parsedUrl = new URL(request.url);
+export async function GET(request: NextRequest) {
+    const parsedUrl = request.nextUrl;
     const code = parsedUrl.searchParams.get('code');
     const state = parsedUrl.searchParams.get('state');
 
