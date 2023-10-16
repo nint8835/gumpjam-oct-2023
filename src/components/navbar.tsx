@@ -32,7 +32,7 @@ function NavItem({ item }: { item: NavItem | NavParent }) {
             {'children' in item ? (
                 <>
                     <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
-                    <NavigationMenuContent className="min-w-fit whitespace-nowrap p-4">
+                    <NavigationMenuContent className="flex min-w-fit flex-col gap-2 whitespace-nowrap p-4">
                         {item.children.map((child) => (
                             <NavChild item={child} key={child.label} />
                         ))}
@@ -75,6 +75,10 @@ export default function Navbar({ currentUser }: { currentUser: typeof users.$inf
         navItems.push({
             label: currentUser.displayName,
             children: [
+                {
+                    label: 'Settings',
+                    href: '/settings',
+                },
                 {
                     label: 'Sign Out',
                     href: '/auth/signout',

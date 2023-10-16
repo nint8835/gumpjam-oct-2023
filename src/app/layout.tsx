@@ -1,5 +1,6 @@
 import ClientProviders from '@/components/client_providers';
 import Navbar from '@/components/navbar';
+import { Toaster } from '@/components/ui/toaster';
 import { ssrGetCurrentUser } from '@/lib/auth';
 import type { Metadata } from 'next';
 import './globals.css';
@@ -21,6 +22,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                         <Navbar currentUser={currentUser} />
                         <div className="flex-1">{children}</div>
                     </div>
+                    <Toaster />
                 </ClientProviders>
             </body>
         </html>
