@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "8665eb24-461f-4983-88ab-a8d939c478f7",
+  "id": "cdea4ed2-05e0-49da-a540-ef001a661209",
   "prevId": "5485ee22-be36-40d8-836c-5e6f671cad94",
   "tables": {
     "companies": {
@@ -21,8 +21,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "founder_id": {
-          "name": "founder_id",
+        "owner_id": {
+          "name": "owner_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -47,12 +47,12 @@
         }
       },
       "foreignKeys": {
-        "companies_founder_id_users_id_fk": {
-          "name": "companies_founder_id_users_id_fk",
+        "companies_owner_id_users_id_fk": {
+          "name": "companies_owner_id_users_id_fk",
           "tableFrom": "companies",
           "tableTo": "users",
           "columnsFrom": [
-            "founder_id"
+            "owner_id"
           ],
           "columnsTo": [
             "id"

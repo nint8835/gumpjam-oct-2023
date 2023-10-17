@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     response.headers.set('Location', parsedUrl.origin);
 
     const session = await getIronSession<SessionData>(request, response, SessionOptions);
-    session.user = user;
+    session.user = user.id;
     await session.save();
 
     return response;

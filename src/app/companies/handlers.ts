@@ -40,7 +40,7 @@ export async function createCompany(data: { name: string }): Promise<
         .insert(companies)
         .values({
             name: data.name,
-            founderId: currentUser.id,
+            ownerId: currentUser.id,
         })
         .execute();
 

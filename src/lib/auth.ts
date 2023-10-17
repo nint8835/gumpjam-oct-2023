@@ -1,3 +1,4 @@
+import db from '@/db';
 import { users } from '@/db/schema';
 import { getServerActionIronSession, type IronSessionOptions } from 'iron-session';
 import { cookies } from 'next/headers';
@@ -26,10 +27,23 @@ export const SessionOptions: IronSessionOptions = {
 export type SessionUser = typeof users.$inferSelect;
 
 export type SessionData = {
-    user?: SessionUser;
+    user?: string;
 };
 
 export async function ssrGetCurrentUser(): Promise<null | SessionUser> {
     const session = await getServerActionIronSession<SessionData>(SessionOptions, cookies());
-    return session.user ?? null;
+
+    if (!session.user) {
+        return null;
+    }
+
+    const user = await db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.id, session.user!),
+    });
+
+    if (!user) {
+        return null;
+    }
+
+    return user ?? null;
 }

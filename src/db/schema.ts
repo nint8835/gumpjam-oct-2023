@@ -13,12 +13,12 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const companies = sqliteTable('companies', {
     id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
     name: text('name').notNull().unique(),
-    founderId: text('founder_id')
+    ownerId: text('owner_id')
         .notNull()
         .references(() => users.id),
     money: integer('money', { mode: 'number' }).notNull().default(0),
 });
 
 export const companiesRelations = relations(companies, ({ one }) => ({
-    founder: one(users, { fields: [companies.founderId], references: [users.id] }),
+    founder: one(users, { fields: [companies.ownerId], references: [users.id] }),
 }));

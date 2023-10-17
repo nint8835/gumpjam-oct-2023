@@ -13,7 +13,7 @@ export default async function CompaniesPage() {
     }
 
     const companies = await db.query.companies.findMany({
-        where: (companies, { eq }) => eq(companies.founderId, currentUser.id),
+        where: (companies, { eq }) => eq(companies.ownerId, currentUser.id),
     });
 
     return (
