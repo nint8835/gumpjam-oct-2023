@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { users } from '@/db/schema';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 type NavParent = {
     label: string;
@@ -26,7 +27,7 @@ type NavItem = {
     isExternal?: boolean;
 };
 
-function NavItem({ item }: { item: NavItem | NavParent }) {
+function NavItem({ item, setIsOpen }: { item: NavItem | NavParent; setIsOpen: (isOpen: boolean) => void }) {
     return (
         <NavigationMenuItem>
             {'children' in item ? (
@@ -34,7 +35,7 @@ function NavItem({ item }: { item: NavItem | NavParent }) {
                     <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
                     <NavigationMenuContent className="flex min-w-fit flex-col gap-2 whitespace-nowrap p-4">
                         {item.children.map((child) => (
-                            <NavChild item={child} key={child.label} />
+                            <NavChild item={child} key={child.label} setIsOpen={setIsOpen} />
                         ))}
                     </NavigationMenuContent>
                 </>
@@ -47,28 +48,34 @@ function NavItem({ item }: { item: NavItem | NavParent }) {
     );
 }
 
-function NavChild({ item }: { item: NavItem }) {
+function NavChild({ item, setIsOpen }: { item: NavItem; setIsOpen: (isOpen: boolean) => void }) {
     const Component = item.isExternal ? 'a' : Link;
 
-    return <Component href={item.href}>{item.label}</Component>;
+    return (
+        <Component href={item.href} onClick={() => setIsOpen(false)}>
+            {item.label}
+        </Component>
+    );
 }
 
-function MobileNavItem({ item }: { item: NavItem | NavParent }) {
+function MobileNavItem({ item, setIsOpen }: { item: NavItem | NavParent; setIsOpen: (isOpen: boolean) => void }) {
     return 'children' in item ? (
         <div className="flex flex-col">
             <div className="font-bold">{item.label}</div>
             <div className="ml-4 flex flex-col">
                 {item.children.map((child) => (
-                    <NavChild item={child} key={child.label} />
+                    <NavChild item={child} key={child.label} setIsOpen={setIsOpen} />
                 ))}
             </div>
         </div>
     ) : (
-        <NavChild item={item} />
+        <NavChild item={item} setIsOpen={setIsOpen} />
     );
 }
 
 export default function Navbar({ currentUser }: { currentUser: typeof users.$inferSelect | null }) {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
     const navItems: (NavParent | NavItem)[] = [];
 
     if (currentUser) {
@@ -106,11 +113,11 @@ export default function Navbar({ currentUser }: { currentUser: typeof users.$inf
             <NavigationMenu className="hidden md:flex">
                 <NavigationMenuList>
                     {navItems.map((item) => (
-                        <NavItem item={item} key={item.label} />
+                        <NavItem item={item} key={item.label} setIsOpen={setIsMenuOpen} />
                     ))}
                 </NavigationMenuList>
             </NavigationMenu>
-            <Sheet>
+            <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <SheetTrigger className="flex md:hidden" asChild>
                     <Button variant="ghost">
                         <Menu className="h-5 w-5" />
@@ -118,7 +125,7 @@ export default function Navbar({ currentUser }: { currentUser: typeof users.$inf
                 </SheetTrigger>
                 <SheetContent>
                     {navItems.map((item) => (
-                        <MobileNavItem item={item} key={item.label} />
+                        <MobileNavItem item={item} key={item.label} setIsOpen={setIsMenuOpen} />
                     ))}
                 </SheetContent>
             </Sheet>
