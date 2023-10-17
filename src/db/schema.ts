@@ -1,3 +1,4 @@
+import { ResourceType } from '@/resources';
 import { relations } from 'drizzle-orm';
 import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
@@ -16,7 +17,6 @@ export const companies = sqliteTable('companies', {
     ownerId: text('owner_id')
         .notNull()
         .references(() => users.id),
-    money: integer('money', { mode: 'number' }).notNull().default(0),
 });
 
 export const companiesRelations = relations(companies, ({ one, many }) => ({
@@ -28,7 +28,7 @@ export const resources = sqliteTable(
     'resources',
     {
         companyId: integer('company_id', { mode: 'number' }).references(() => companies.id),
-        type: text('type').notNull(),
+        type: text('type').notNull().$type<ResourceType>(),
         amount: integer('amount', { mode: 'number' }).notNull().default(0),
     },
     (table) => ({

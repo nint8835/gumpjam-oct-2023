@@ -14,6 +14,9 @@ export default async function CompaniesPage() {
 
     const companies = await db.query.companies.findMany({
         where: (companies, { eq }) => eq(companies.ownerId, currentUser.id),
+        with: {
+            resources: true,
+        },
     });
 
     return (

@@ -1,11 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import db from '@/db';
-import { ssrGetCurrentUser } from '@/lib/auth';
+import { ResourceType, Resources } from '@/resources';
+import { getResourceAmount } from '@/resources/utils';
 
 export default async function CompanyPage({ params }: { params: { id: number } }) {
-    const currentUser = await ssrGetCurrentUser();
-
     const company = await db.query.companies.findFirst({
         where: (company, { eq }) => eq(company.id, params.id),
         with: {
@@ -17,6 +16,8 @@ export default async function CompanyPage({ params }: { params: { id: number } }
     if (!company) {
         return <div>Company not found.</div>;
     }
+
+    const nonMoneyResources = company.resources.filter((resource) => resource.type !== ResourceType.Money);
 
     return (
         <div className="space-y-4 p-4">
@@ -34,7 +35,11 @@ export default async function CompanyPage({ params }: { params: { id: number } }
                         </div>
                         <div className="flex flex-1 flex-col">
                             <div className="text-sm font-semibold text-muted-foreground">Money</div>
-                            <div className="text-xl font-semibold text-accent-foreground">${company.money}</div>
+                            <div className="text-xl font-semibold text-accent-foreground">
+                                {Resources[ResourceType.Money].valueString(
+                                    getResourceAmount(company, ResourceType.Money),
+                                )}
+                            </div>
                         </div>
                     </div>
                 </CardContent>
@@ -44,7 +49,7 @@ export default async function CompanyPage({ params }: { params: { id: number } }
                     <CardTitle>Resources</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {company.resources.length > 0 ? (
+                    {nonMoneyResources.length > 0 ? (
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -53,16 +58,18 @@ export default async function CompanyPage({ params }: { params: { id: number } }
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {company.resources.map((resource) => (
+                                {nonMoneyResources.map((resource) => (
                                     <TableRow key={resource.type}>
-                                        <TableCell>{resource.type}</TableCell>
-                                        <TableCell>{resource.amount}</TableCell>
+                                        <TableCell>{Resources[resource.type].name}</TableCell>
+                                        <TableCell>{Resources[resource.type].valueString(resource.amount)}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
                     ) : (
-                        <div>This company does not own any resources.</div>
+                        <div className="text-center text-muted-foreground">
+                            This company does not own any resources.
+                        </div>
                     )}
                 </CardContent>
             </Card>

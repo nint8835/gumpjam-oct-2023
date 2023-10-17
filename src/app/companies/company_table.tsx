@@ -1,10 +1,16 @@
 'use client';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { companies as companiesTable } from '@/db/schema';
+import { companies as companiesTable, resources } from '@/db/schema';
+import { ResourceType, Resources } from '@/resources';
+import { getResourceAmount } from '@/resources/utils';
 import { useRouter } from 'next/navigation';
 
-export function CompanyTable({ companies }: { companies: (typeof companiesTable.$inferSelect)[] }) {
+export function CompanyTable({
+    companies,
+}: {
+    companies: (typeof companiesTable.$inferSelect & { resources: (typeof resources.$inferSelect)[] })[];
+}) {
     const router = useRouter();
 
     return (
@@ -23,7 +29,9 @@ export function CompanyTable({ companies }: { companies: (typeof companiesTable.
                         onClick={() => router.push(`/companies/${company.id}`)}
                     >
                         <TableCell>{company.name}</TableCell>
-                        <TableCell>${company.money}</TableCell>
+                        <TableCell>
+                            {Resources[ResourceType.Money].valueString(getResourceAmount(company, ResourceType.Money))}
+                        </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
