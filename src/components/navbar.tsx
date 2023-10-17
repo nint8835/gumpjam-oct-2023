@@ -73,6 +73,10 @@ export default function Navbar({ currentUser }: { currentUser: typeof users.$inf
 
     if (currentUser) {
         navItems.push({
+            label: 'Companies',
+            href: '/companies',
+        });
+        navItems.push({
             label: currentUser.displayName,
             children: [
                 {
