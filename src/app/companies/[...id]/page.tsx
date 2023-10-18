@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import db from '@/db';
 import { ssrGetCurrentUser } from '@/lib/auth';
 import { ResourceType, Resources } from '@/resources';
-import { getResourceAmount } from '@/resources/utils';
+import { getCompanyValue, getResourceAmount } from '@/resources/utils';
 import { ResourceTable } from './resource_table';
 
 export default async function CompanyPage({ params }: { params: { id: number } }) {
@@ -42,6 +42,12 @@ export default async function CompanyPage({ params }: { params: { id: number } }
                             <div className="text-sm font-semibold text-muted-foreground">Owner</div>
                             <div className="text-xl font-semibold text-accent-foreground">
                                 {company.owner.displayName}
+                            </div>
+                        </div>
+                        <div className="flex flex-1 flex-col">
+                            <div className="text-sm font-semibold text-muted-foreground">Value</div>
+                            <div className="text-xl font-semibold text-accent-foreground">
+                                {Resources[ResourceType.Money].valueString(getCompanyValue(company))}
                             </div>
                         </div>
                         <div className="flex flex-1 flex-col">

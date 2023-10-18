@@ -3,7 +3,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { companies as companiesTable, resources } from '@/db/schema';
 import { ResourceType, Resources } from '@/resources';
-import { getResourceAmount } from '@/resources/utils';
+import { getCompanyValue } from '@/resources/utils';
 import { useRouter } from 'next/navigation';
 
 export function CompanyTable({
@@ -18,7 +18,7 @@ export function CompanyTable({
             <TableHeader>
                 <TableRow>
                     <TableHead>Company</TableHead>
-                    <TableHead>Money</TableHead>
+                    <TableHead>Value</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -29,9 +29,7 @@ export function CompanyTable({
                         onClick={() => router.push(`/companies/${company.id}`)}
                     >
                         <TableCell>{company.name}</TableCell>
-                        <TableCell>
-                            {Resources[ResourceType.Money].valueString(getResourceAmount(company, ResourceType.Money))}
-                        </TableCell>
+                        <TableCell>{Resources[ResourceType.Money].valueString(getCompanyValue(company))}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>

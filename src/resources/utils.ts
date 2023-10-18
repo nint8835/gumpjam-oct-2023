@@ -1,5 +1,5 @@
 import { resources } from '@/db/schema';
-import { ResourceType } from '.';
+import { ResourceType, Resources } from '.';
 
 export function getResourceAmount(
     company: { resources: (typeof resources.$inferSelect)[] },
@@ -8,4 +8,10 @@ export function getResourceAmount(
     const resource = company.resources.find((r) => r.type === type);
 
     return resource?.amount ?? 0;
+}
+
+export function getCompanyValue(company: { resources: (typeof resources.$inferSelect)[] }): number {
+    return company.resources.reduce((acc, resource) => {
+        return acc + resource.amount * Resources[resource.type].value;
+    }, 0);
 }
