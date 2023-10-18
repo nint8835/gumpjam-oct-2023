@@ -8,6 +8,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/components/ui/use-toast';
@@ -47,9 +48,18 @@ function SellResourceDialog({
                     <DialogHeader>
                         <DialogTitle>Sell {Resources[resource.type].name}</DialogTitle>
                     </DialogHeader>
-                    <div className="mt-4">
-                        <Slider value={[amount]} onValueChange={([value]) => setAmount(value)} max={resource.amount} />
-                        <div className="flex justify-center pt-1 text-muted-foreground">{amount}</div>
+                    <div className="space-y-4">
+                        <Label>Amount</Label>
+                        <div>
+                            <Slider
+                                value={[amount]}
+                                onValueChange={([value]) => setAmount(value)}
+                                max={resource.amount}
+                            />
+                            <div className="flex justify-center pt-1 text-muted-foreground">
+                                {Resources[resource.type].valueString(amount)}
+                            </div>
+                        </div>
                     </div>
 
                     <DialogFooter className="flex-row-reverse justify-between sm:flex-row-reverse sm:justify-between">
@@ -162,6 +172,7 @@ export function ResourceTable({
                                             )}
                                             {Resources[resource.type].isSellable && (
                                                 <DropdownMenuItem
+                                                    disabled={resource.amount === 0}
                                                     onClick={() => {
                                                         setSelectedResource(resource);
                                                         setSellDialogOpen(true);

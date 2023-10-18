@@ -22,7 +22,7 @@ export const Resources: Record<ResourceType, Resource> = {
         name: 'Money',
         type: ResourceType.Money,
         value: 1,
-        valueString: (amount: number) => `$${amount}`,
+        valueString: (amount: number) => `$${amount.toLocaleString()}`,
     },
 
     [ResourceType.TechnicalInnovation]: {
@@ -32,6 +32,6 @@ export const Resources: Record<ResourceType, Resource> = {
         produceTime: 1,
         isSellable: true,
         value: 5,
-        valueString: (amount: number) => amount.toString(),
+        valueString: (amount: number) => amount.toLocaleString(),
     },
 };
