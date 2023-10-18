@@ -68,3 +68,51 @@ export async function sellResource({
         return null;
     });
 }
+
+export async function craftResource({
+    company,
+    type,
+    amount,
+}: {
+    company: number;
+    type: ResourceType;
+    amount: number;
+}): Promise<null | string> {
+    return await db.transaction(async (tx) => {
+        const ingredientAmounts = Object.entries(Resources[type].crafting!.ingredients).map(
+            ([ingrType, ingrAmount]) => ({
+                type: ingrType as ResourceType,
+                amount: ingrAmount * amount,
+            }),
+        );
+
+        for (const { type: ingredientType, amount: ingredientAmount } of ingredientAmounts) {
+            const ingredient = await tx.query.resources.findFirst({
+                where: (resources, { and, eq }) =>
+                    and(eq(resources.companyId, company), eq(resources.type, ingredientType)),
+            });
+
+            if (!ingredient || ingredient.amount < ingredientAmount) {
+                return `Not enough ${Resources[ingredientType].name}.`;
+            }
+        }
+
+        for (const { type: ingredientType, amount: ingredientAmount } of ingredientAmounts) {
+            await tx
+                .update(resources)
+                .set({ amount: sql`${resources.amount} - ${ingredientAmount}` })
+                .where(and(eq(resources.companyId, company), eq(resources.type, ingredientType)));
+        }
+
+        const yieldAmount = Resources[type].crafting!.yield * amount;
+
+        await tx
+            .insert(resources)
+            .values({ companyId: company, type, amount: yieldAmount })
+            .onConflictDoUpdate({
+                target: [resources.companyId, resources.type],
+                set: { amount: sql`${resources.amount} + ${yieldAmount}` },
+            });
+        return null;
+    });
+}
