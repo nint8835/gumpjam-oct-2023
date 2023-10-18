@@ -23,7 +23,6 @@ export default async function CompanyPage({ params }: { params: { id: number } }
     const isOwner = currentUser !== null && company.ownerId === currentUser.id;
 
     const displayedResources = Object.values(ResourceType)
-        .filter((resourceType) => resourceType !== ResourceType.Money)
         .map((resourceType) => ({
             type: resourceType,
             amount: getResourceAmount(company, resourceType),
