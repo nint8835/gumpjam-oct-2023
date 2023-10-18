@@ -78,6 +78,18 @@ export default function Navbar({ currentUser }: { currentUser: typeof users.$inf
 
     const navItems: (NavParent | NavItem)[] = [];
 
+    if (process.env.NODE_ENV === 'development') {
+        navItems.push({
+            label: 'Debug',
+            children: [
+                {
+                    label: 'Impersonate',
+                    href: '/debug/impersonate',
+                },
+            ],
+        });
+    }
+
     if (currentUser) {
         navItems.push({
             label: 'Companies',
