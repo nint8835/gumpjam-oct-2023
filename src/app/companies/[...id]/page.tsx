@@ -1,10 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import db from '@/db';
+import { ssrGetCurrentUser } from '@/lib/auth';
 import { ResourceType, Resources } from '@/resources';
 import { getResourceAmount } from '@/resources/utils';
+import { ResourceTable } from './resource_table';
 
 export default async function CompanyPage({ params }: { params: { id: number } }) {
+    const currentUser = await ssrGetCurrentUser();
+
     const company = await db.query.companies.findFirst({
         where: (company, { eq }) => eq(company.id, params.id),
         with: {
@@ -17,7 +20,15 @@ export default async function CompanyPage({ params }: { params: { id: number } }
         return <div>Company not found.</div>;
     }
 
-    const nonMoneyResources = company.resources.filter((resource) => resource.type !== ResourceType.Money);
+    const isOwner = currentUser !== null && company.ownerId === currentUser.id;
+
+    const displayedResources = Object.values(ResourceType)
+        .filter((resourceType) => resourceType !== ResourceType.Money)
+        .map((resourceType) => ({
+            type: resourceType,
+            amount: getResourceAmount(company, resourceType),
+        }))
+        .filter(({ amount }) => amount > 0 || isOwner);
 
     return (
         <div className="space-y-4 p-4">
@@ -49,23 +60,8 @@ export default async function CompanyPage({ params }: { params: { id: number } }
                     <CardTitle>Resources</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {nonMoneyResources.length > 0 ? (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Resource</TableHead>
-                                    <TableHead>Amount</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {nonMoneyResources.map((resource) => (
-                                    <TableRow key={resource.type}>
-                                        <TableCell>{Resources[resource.type].name}</TableCell>
-                                        <TableCell>{Resources[resource.type].valueString(resource.amount)}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                    {displayedResources.length > 0 ? (
+                        <ResourceTable resources={displayedResources} isOwner={isOwner} companyId={company.id} />
                     ) : (
                         <div className="text-center text-muted-foreground">
                             This company does not own any resources.
