@@ -1,7 +1,7 @@
 'use client';
 import { Resources } from '@/resources';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { ForceGraph2D } from 'react-force-graph';
+import ForceGraph from 'react-force-graph-2d';
 
 export function Tree() {
     const ref = useRef<HTMLDivElement>(null);
@@ -39,7 +39,7 @@ export function Tree() {
 
     return (
         <div className="h-full" ref={ref}>
-            <ForceGraph2D
+            <ForceGraph
                 nodeId="type"
                 // This code hurts me
                 nodeLabel={({ category, name }) =>

@@ -31,7 +31,7 @@
         "next": "^13.5.5",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-force-graph": "^1.44.0",
+        "react-force-graph-2d": "^1.25.2",
         "react-hook-form": "^7.47.0",
         "simple-oauth2": "^5.0.0",
         "tailwind-merge": "^1.14.0",
