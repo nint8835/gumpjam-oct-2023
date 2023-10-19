@@ -15,10 +15,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
     return (
         <html lang="en">
-            <body className="dark min-h-screen">
-                <div className="flex min-h-screen flex-col">
+            <body className="dark h-screen">
+                <div className="h-full">
                     <Navbar currentUser={currentUser} />
-                    <div className="flex-1">{children}</div>
+                    <div className="h-[calc(100vh_-_3rem)]">{children}</div>
                 </div>
                 <Toaster />
             </body>

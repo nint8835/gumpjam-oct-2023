@@ -32,7 +32,7 @@ export default async function HomePage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Untitled Gumpjam Game</CardTitle>
-                    <CardDescription>World's leading "number go up" simulator.</CardDescription>
+                    <CardDescription>{`World's leading "number go up" simulator.`}</CardDescription>
                 </CardHeader>
 
                 <CardContent>
@@ -64,7 +64,7 @@ export default async function HomePage() {
                                 <h3 className="text-xl font-semibold">Your Stats</h3>
                                 {ownedCompanies.length === 0 ? (
                                     <div className="flex w-full flex-row justify-center text-muted-foreground">
-                                        You don't own any companies.
+                                        {"You don't own any companies."}
                                     </div>
                                 ) : (
                                     <div className="flex flex-row gap-4">

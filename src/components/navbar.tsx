@@ -86,6 +86,10 @@ export default function Navbar({ currentUser }: { currentUser: typeof users.$inf
                     label: 'Impersonate',
                     href: '/debug/impersonate',
                 },
+                {
+                    label: 'Crafting Tree',
+                    href: '/debug/tree',
+                },
             ],
         });
     }
