@@ -1,16 +1,11 @@
 'use client';
 
+import TooltipButton from '@/components/tooltip_button';
 import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/components/ui/use-toast';
 import { ResourceType, Resources } from '@/resources';
-import { MoreHorizontal } from 'lucide-react';
+import { Hammer, Store, Tractor } from 'lucide-react';
 import { useState } from 'react';
 import { CraftResourceDialog } from './craft_dialog';
 import { produceResource } from './handlers';
@@ -63,56 +58,53 @@ export function ResourceTable({
                                     )}
                                 </TableCell>
                                 {isOwner && (
-                                    <TableCell className="w-0">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button className="h-8 w-8 p-0" variant="ghost">
-                                                    <MoreHorizontal className="h-4 w-4" />
+                                    <TableCell className="flex flex-row">
+                                        {Resources[resource.type].isManuallyProducable && (
+                                            <TooltipButton tooltip="Produce">
+                                                <Button
+                                                    variant="ghost"
+                                                    onClick={async () => {
+                                                        const resp = await produceResource(resource.type, companyId);
+                                                        if (!resp.success) {
+                                                            toast({
+                                                                title: 'Error producing resource',
+                                                                description: resp.message,
+                                                                variant: 'destructive',
+                                                            });
+                                                        }
+                                                    }}
+                                                >
+                                                    <Tractor className="h-4 w-4" />
                                                 </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                {Resources[resource.type].isManuallyProducable && (
-                                                    <DropdownMenuItem
-                                                        onClick={async () => {
-                                                            const resp = await produceResource(
-                                                                resource.type,
-                                                                companyId,
-                                                            );
-                                                            if (!resp.success) {
-                                                                toast({
-                                                                    title: 'Error producing resource',
-                                                                    description: resp.message,
-                                                                    variant: 'destructive',
-                                                                });
-                                                            }
-                                                        }}
-                                                    >
-                                                        Produce
-                                                    </DropdownMenuItem>
-                                                )}
-                                                {Resources[resource.type].crafting && (
-                                                    <DropdownMenuItem
-                                                        onClick={() => {
-                                                            setSelectedResource(resource);
-                                                            setCraftDialogOpen(true);
-                                                        }}
-                                                    >
-                                                        Craft
-                                                    </DropdownMenuItem>
-                                                )}
-                                                {Resources[resource.type].isSellable && (
-                                                    <DropdownMenuItem
-                                                        disabled={resource.amount === 0}
-                                                        onClick={() => {
-                                                            setSelectedResource(resource);
-                                                            setSellDialogOpen(true);
-                                                        }}
-                                                    >
-                                                        Sell
-                                                    </DropdownMenuItem>
-                                                )}
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                            </TooltipButton>
+                                        )}
+                                        {Resources[resource.type].crafting && (
+                                            <TooltipButton tooltip="Craft">
+                                                <Button
+                                                    variant="ghost"
+                                                    onClick={() => {
+                                                        setSelectedResource(resource);
+                                                        setCraftDialogOpen(true);
+                                                    }}
+                                                >
+                                                    <Hammer className="h-4 w-4" />
+                                                </Button>
+                                            </TooltipButton>
+                                        )}
+                                        {Resources[resource.type].isSellable && (
+                                            <TooltipButton tooltip="Sell">
+                                                <Button
+                                                    variant="ghost"
+                                                    disabled={resource.amount === 0}
+                                                    onClick={() => {
+                                                        setSelectedResource(resource);
+                                                        setSellDialogOpen(true);
+                                                    }}
+                                                >
+                                                    <Store className="h-4 w-4" />
+                                                </Button>
+                                            </TooltipButton>
+                                        )}
                                     </TableCell>
                                 )}
                             </TableRow>

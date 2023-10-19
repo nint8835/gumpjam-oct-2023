@@ -89,7 +89,7 @@ export const Resources: Record<ResourceType, Resource> = {
         name: 'Basic Website',
         type: ResourceType.BasicWebsite,
         isSellable: true,
-        value: 1,
+        value: 75,
         valueString: (amount: number) => amount.toLocaleString(),
         crafting: {
             ingredients: {
