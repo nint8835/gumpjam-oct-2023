@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/components/ui/use-toast';
 import { ResourceType, Resources } from '@/resources';
+import { formatResourceAmount } from '@/resources/utils';
 import { useEffect, useState } from 'react';
 import { sellResource } from './handlers';
 
@@ -47,7 +48,7 @@ export function SellResourceDialog({
                                 max={resource.amount}
                             />
                             <div className="flex justify-center pt-1 text-muted-foreground">
-                                {Resources[resource.type].valueString(amount)}
+                                {formatResourceAmount(resource.type, amount)}
                             </div>
                         </div>
                     </div>
@@ -80,7 +81,7 @@ export function SellResourceDialog({
                             <div className="flex self-center whitespace-pre">
                                 You will receive{' '}
                                 <span className="text-green-500">
-                                    {Resources[ResourceType.Money].valueString(Resources[resource.type].value * amount)}
+                                    {formatResourceAmount(ResourceType.Money, Resources[resource.type].value * amount)}
                                 </span>{' '}
                                 from this sale.
                             </div>

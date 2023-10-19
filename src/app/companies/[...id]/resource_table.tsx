@@ -8,6 +8,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { resources as resourcesTable } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { ResourceCategory, ResourceType, Resources } from '@/resources';
+import { formatResourceAmount } from '@/resources/utils';
 import { Hammer, Store, Tractor } from 'lucide-react';
 import { useState } from 'react';
 import { CraftResourceDialog } from './craft_dialog';
@@ -72,10 +73,11 @@ export function ResourceTable({
                                     <TableRow key={resource.type}>
                                         <TableCell>{Resources[resource.type].name}</TableCell>
                                         <TableCell className="text-right">
-                                            {Resources[resource.type].valueString(resource.amount)}
+                                            {formatResourceAmount(resource.type, resource.amount)}
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            {Resources[ResourceType.Money].valueString(
+                                            {formatResourceAmount(
+                                                ResourceType.Money,
                                                 Resources[resource.type].value * resource.amount,
                                             )}
                                         </TableCell>

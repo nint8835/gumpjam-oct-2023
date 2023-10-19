@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import db from '@/db';
 import { ssrGetCurrentUser } from '@/lib/auth';
-import { ResourceType, Resources } from '@/resources';
-import { getCompanyValue, getResourceAmount } from '@/resources/utils';
+import { ResourceType } from '@/resources';
+import { formatResourceAmount, getCompanyValue, getResourceAmount } from '@/resources/utils';
 import { ResourceTable } from './resource_table';
 
 export default async function CompanyPage({ params }: { params: { id: number } }) {
@@ -51,13 +51,14 @@ export default async function CompanyPage({ params }: { params: { id: number } }
                         <div className="flex flex-1 flex-col">
                             <div className="text-sm font-semibold text-muted-foreground">Value</div>
                             <div className="text-xl font-semibold text-accent-foreground">
-                                {Resources[ResourceType.Money].valueString(getCompanyValue(company))}
+                                {formatResourceAmount(ResourceType.Money, getCompanyValue(company))}
                             </div>
                         </div>
                         <div className="flex flex-1 flex-col">
                             <div className="text-sm font-semibold text-muted-foreground">Money</div>
                             <div className="text-xl font-semibold text-accent-foreground">
-                                {Resources[ResourceType.Money].valueString(
+                                {formatResourceAmount(
+                                    ResourceType.Money,
                                     getResourceAmount(company, ResourceType.Money),
                                 )}
                             </div>

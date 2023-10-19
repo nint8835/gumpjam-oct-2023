@@ -7,6 +7,7 @@ import { resources } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { ResourceType, Resources } from '@/resources';
 import { CraftingData } from '@/resources/craft_data';
+import { formatResourceAmount } from '@/resources/utils';
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { craftResource } from './handlers';
@@ -70,14 +71,14 @@ export function CraftResourceDialog({
                             {craftingData.requiredIngredients(amount).map(([resourceType, resourceAmount]) => (
                                 <div key={resourceType} className="flex items-center justify-between">
                                     <div>{Resources[resourceType].name}</div>
-                                    <div>{Resources[resourceType].valueString(resourceAmount)}</div>
+                                    <div>{formatResourceAmount(resourceType, resourceAmount)}</div>
                                 </div>
                             ))}
                         </div>
                         <ArrowRight className="m-1" />
                         <div className="flex flex-1 items-center justify-between">
                             <div>{resourceMeta.name}</div>
-                            <div>{resourceMeta.valueString(craftingData.yield(amount))}</div>
+                            <div>{formatResourceAmount(resource.type, craftingData.yield(amount))}</div>
                         </div>
                     </div>
                 </div>
@@ -110,7 +111,7 @@ export function CraftResourceDialog({
                         <div className="flex self-center whitespace-pre">
                             You will {valueDifference >= 0 ? 'gain' : 'lose'}{' '}
                             <span className={cn(valueDifference >= 0 ? 'text-green-500' : 'text-red-500')}>
-                                {Resources[ResourceType.Money].valueString(Math.abs(valueDifference))}
+                                {formatResourceAmount(ResourceType.Money, Math.abs(valueDifference))}
                             </span>{' '}
                             from this craft.
                         </div>

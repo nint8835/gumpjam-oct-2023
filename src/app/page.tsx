@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import db from '@/db';
 import { ssrGetCurrentUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
-import { ResourceType, Resources } from '@/resources';
-import { getCompanyValue } from '@/resources/utils';
+import { ResourceType } from '@/resources';
+import { formatResourceAmount, getCompanyValue } from '@/resources/utils';
 import Link from 'next/link';
 
 export default async function HomePage() {
@@ -48,13 +48,13 @@ export default async function HomePage() {
                             <div className="flex flex-1 flex-col">
                                 <div className="text-sm font-semibold text-muted-foreground">Total Value</div>
                                 <div className="text-xl font-semibold text-accent-foreground">
-                                    {Resources[ResourceType.Money].valueString(totalValue)}
+                                    {formatResourceAmount(ResourceType.Money, totalValue)}
                                 </div>
                             </div>
                             <div className="flex flex-1 flex-col">
                                 <div className="text-sm font-semibold text-muted-foreground">Average Value</div>
                                 <div className="text-xl font-semibold text-accent-foreground">
-                                    {Resources[ResourceType.Money].valueString(totalValue / allCompanies.length)}
+                                    {formatResourceAmount(ResourceType.Money, totalValue / allCompanies.length)}
                                 </div>
                             </div>
                         </div>
@@ -77,7 +77,7 @@ export default async function HomePage() {
                                         <div className="flex flex-1 flex-col">
                                             <div className="text-sm font-semibold text-muted-foreground">Value</div>
                                             <div className="whitespace-pre text-xl font-semibold text-accent-foreground">
-                                                {Resources[ResourceType.Money].valueString(ownedValue)}{' '}
+                                                {formatResourceAmount(ResourceType.Money, ownedValue)}{' '}
                                                 <span className="text-sm text-muted-foreground">
                                                     ({((ownedValue / totalValue) * 100).toLocaleString()}% of the
                                                     economy)
@@ -89,7 +89,8 @@ export default async function HomePage() {
                                                 Average Value
                                             </div>
                                             <div className="whitespace-pre text-xl font-semibold text-accent-foreground">
-                                                {Resources[ResourceType.Money].valueString(
+                                                {formatResourceAmount(
+                                                    ResourceType.Money,
                                                     ownedValue / ownedCompanies.length,
                                                 )}{' '}
                                                 <span
@@ -98,7 +99,8 @@ export default async function HomePage() {
                                                         averageDifference >= 0 ? 'text-green-700' : 'text-red-700',
                                                     )}
                                                 >
-                                                    {Resources[ResourceType.Money].valueString(
+                                                    {formatResourceAmount(
+                                                        ResourceType.Money,
                                                         Math.abs(averageDifference),
                                                     )}{' '}
                                                     {averageDifference > 0 ? 'above' : 'below'} average

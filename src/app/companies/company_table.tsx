@@ -2,8 +2,8 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { companies as companiesTable, resources } from '@/db/schema';
-import { ResourceType, Resources } from '@/resources';
-import { getCompanyValue } from '@/resources/utils';
+import { ResourceType } from '@/resources';
+import { formatResourceAmount, getCompanyValue } from '@/resources/utils';
 import { useRouter } from 'next/navigation';
 
 export function CompanyTable({
@@ -29,7 +29,7 @@ export function CompanyTable({
                         onClick={() => router.push(`/companies/${company.id}`)}
                     >
                         <TableCell>{company.name}</TableCell>
-                        <TableCell>{Resources[ResourceType.Money].valueString(getCompanyValue(company))}</TableCell>
+                        <TableCell>{formatResourceAmount(ResourceType.Money, getCompanyValue(company))}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>

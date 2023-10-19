@@ -15,3 +15,13 @@ export function getCompanyValue(company: { resources: (typeof resources.$inferSe
         return acc + resource.amount * Resources[resource.type].value;
     }, 0);
 }
+
+export function formatResourceAmount(type: ResourceType, amount: number): string {
+    const resourceMeta = Resources[type];
+
+    if (resourceMeta.amountString) {
+        return resourceMeta.amountString(amount);
+    }
+
+    return amount.toLocaleString();
+}

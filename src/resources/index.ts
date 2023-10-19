@@ -16,7 +16,7 @@ export interface Resource {
         yield: number;
     };
 
-    valueString: (amount: number) => string;
+    amountString?: (amount: number) => string;
 }
 
 export enum ResourceType {
@@ -40,7 +40,7 @@ export const Resources: Record<ResourceType, Resource> = {
         type: ResourceType.Money,
         category: ResourceCategory.Core,
         value: 1,
-        valueString: (amount: number) => `$${amount.toLocaleString()}`,
+        amountString: (amount: number) => `$${amount.toLocaleString()}`,
     },
 
     [ResourceType.TechnicalDevelopment]: {
@@ -51,7 +51,6 @@ export const Resources: Record<ResourceType, Resource> = {
         produceTime: 1,
         isSellable: true,
         value: 1,
-        valueString: (amount: number) => amount.toLocaleString(),
     },
 
     [ResourceType.HTML]: {
@@ -60,7 +59,6 @@ export const Resources: Record<ResourceType, Resource> = {
         category: ResourceCategory.Tech,
         isSellable: true,
         value: 7,
-        valueString: (amount: number) => amount.toLocaleString(),
         crafting: {
             ingredients: {
                 [ResourceType.TechnicalDevelopment]: 5,
@@ -74,7 +72,6 @@ export const Resources: Record<ResourceType, Resource> = {
         category: ResourceCategory.Tech,
         isSellable: true,
         value: 7,
-        valueString: (amount: number) => amount.toLocaleString(),
         crafting: {
             ingredients: {
                 [ResourceType.TechnicalDevelopment]: 5,
@@ -88,7 +85,6 @@ export const Resources: Record<ResourceType, Resource> = {
         category: ResourceCategory.Tech,
         isSellable: true,
         value: 7,
-        valueString: (amount: number) => amount.toLocaleString(),
         crafting: {
             ingredients: {
                 [ResourceType.TechnicalDevelopment]: 5,
@@ -102,7 +98,6 @@ export const Resources: Record<ResourceType, Resource> = {
         category: ResourceCategory.Tech,
         isSellable: true,
         value: 75,
-        valueString: (amount: number) => amount.toLocaleString(),
         crafting: {
             ingredients: {
                 [ResourceType.HTML]: 3,
