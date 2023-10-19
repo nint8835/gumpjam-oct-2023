@@ -71,7 +71,7 @@ export default async function CompanyPage({ params }: { params: { id: number } }
                     <CardTitle>Resources</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {displayedResources.length > 0 ? (
+                    {displayedResources.filter(({ type }) => type !== ResourceType.Money).length > 0 ? (
                         <ResourceTable resources={displayedResources} isOwner={isOwner} companyId={company.id} />
                     ) : (
                         <div className="text-center text-muted-foreground">
