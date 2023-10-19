@@ -43,8 +43,11 @@ export function CraftResourceDialog({
     }
 
     const resourceMeta = Resources[resource.type];
+    const craftDetails = resourceMeta.crafting;
 
-    const craftDetails = resourceMeta.crafting!;
+    if (craftDetails === undefined) {
+        return null;
+    }
 
     const maxCraftable = Math.min(
         ...Object.entries(craftDetails.ingredients).map(([resourceType, amount]) => {
