@@ -3,8 +3,10 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/components/ui/use-toast';
+import { resources } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { ResourceType, Resources } from '@/resources';
+import { CraftingData } from '@/resources/craft_data';
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { craftResource } from './handlers';
@@ -16,14 +18,8 @@ export function CraftResourceDialog({
     setOpen,
     allResources,
 }: {
-    resource: {
-        type: ResourceType;
-        amount: number;
-    } | null;
-    allResources: {
-        type: ResourceType;
-        amount: number;
-    }[];
+    resource: typeof resources.$inferSelect | null;
+    allResources: (typeof resources.$inferSelect)[];
     companyId: number;
     open: boolean;
     setOpen: (open: boolean) => void;
@@ -42,27 +38,14 @@ export function CraftResourceDialog({
         return null;
     }
 
+    const craftingData = new CraftingData(allResources, resource.type);
     const resourceMeta = Resources[resource.type];
-    const craftDetails = resourceMeta.crafting;
-
-    if (craftDetails === undefined) {
-        return null;
-    }
-
-    const maxCraftable = Math.min(
-        ...Object.entries(craftDetails.ingredients).map(([resourceType, amount]) => {
-            const resourceCount = allResources.find((r) => r.type === (resourceType as ResourceType))?.amount ?? 0;
-
-            return Math.floor(resourceCount / amount);
-        }),
-    );
 
     const valueDifference =
-        resourceMeta.value * craftDetails.yield * amount -
-        Object.entries(craftDetails.ingredients)
-            .map(
-                ([resourceType, resourceCost]) => Resources[resourceType as ResourceType].value * resourceCost * amount,
-            )
+        resourceMeta.value * craftingData.yield(amount) -
+        craftingData
+            .requiredIngredients(amount)
+            .map(([resourceType, resourceAmount]) => Resources[resourceType].value * resourceAmount)
             .reduce((a, b) => a + b, 0);
 
     return (
@@ -74,27 +57,27 @@ export function CraftResourceDialog({
                 <div className="space-y-4">
                     <Label>Amount</Label>
                     <div>
-                        <Slider value={[amount]} onValueChange={([value]) => setAmount(value)} max={maxCraftable} />
-                        <div className="flex justify-center pt-1 text-muted-foreground">
-                            {Resources[resource.type].valueString(amount)}
-                        </div>
+                        <Slider
+                            value={[amount]}
+                            onValueChange={([value]) => setAmount(value)}
+                            max={craftingData.maxCraftable}
+                        />
+                        <div className="flex justify-center pt-1 text-muted-foreground">{amount.toLocaleString()}</div>
                     </div>
 
                     <div className="flex flex-row items-center justify-between gap-1">
                         <div className="flex-1">
-                            {Object.entries(craftDetails.ingredients).map(([resourceType, resourceCost]) => (
-                                <div key={resourceType as ResourceType} className="flex items-center justify-between">
-                                    <div>{Resources[resourceType as ResourceType].name}</div>
-                                    <div>
-                                        {Resources[resourceType as ResourceType].valueString(resourceCost * amount)}
-                                    </div>
+                            {craftingData.requiredIngredients(amount).map(([resourceType, resourceAmount]) => (
+                                <div key={resourceType} className="flex items-center justify-between">
+                                    <div>{Resources[resourceType].name}</div>
+                                    <div>{Resources[resourceType].valueString(resourceAmount)}</div>
                                 </div>
                             ))}
                         </div>
                         <ArrowRight className="m-1" />
                         <div className="flex flex-1 items-center justify-between">
-                            <div>{Resources[resource.type].name}</div>
-                            <div>{Resources[resource.type].valueString(craftDetails.yield * amount)}</div>
+                            <div>{resourceMeta.name}</div>
+                            <div>{resourceMeta.valueString(craftingData.yield(amount))}</div>
                         </div>
                     </div>
                 </div>

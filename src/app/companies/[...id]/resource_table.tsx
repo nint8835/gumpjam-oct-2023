@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
+import { resources as resourcesTable } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { ResourceCategory, ResourceType, Resources } from '@/resources';
 import { Hammer, Store, Tractor } from 'lucide-react';
@@ -18,10 +19,7 @@ export function ResourceTable({
     isOwner,
     companyId,
 }: {
-    resources: {
-        type: ResourceType;
-        amount: number;
-    }[];
+    resources: (typeof resourcesTable.$inferSelect)[];
     isOwner: boolean;
     companyId: number;
 }) {
@@ -29,10 +27,7 @@ export function ResourceTable({
 
     const [sellDialogOpen, setSellDialogOpen] = useState(false);
     const [craftDialogOpen, setCraftDialogOpen] = useState(false);
-    const [selectedResource, setSelectedResource] = useState<{
-        type: ResourceType;
-        amount: number;
-    } | null>(null);
+    const [selectedResource, setSelectedResource] = useState<typeof resourcesTable.$inferSelect | null>(null);
 
     const groupedResources = resources
         .filter((resource) => resource.type !== ResourceType.Money)

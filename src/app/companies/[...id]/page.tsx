@@ -23,10 +23,15 @@ export default async function CompanyPage({ params }: { params: { id: number } }
     const isOwner = currentUser !== null && company.ownerId === currentUser.id;
 
     const displayedResources = Object.values(ResourceType)
-        .map((resourceType) => ({
-            type: resourceType,
-            amount: getResourceAmount(company, resourceType),
-        }))
+        .map((resourceType) => {
+            return (
+                company.resources.find((r) => r.type === resourceType) ?? {
+                    type: resourceType,
+                    companyId: company.id,
+                    amount: 0,
+                }
+            );
+        })
         .filter(({ amount }) => amount > 0 || isOwner);
 
     return (
