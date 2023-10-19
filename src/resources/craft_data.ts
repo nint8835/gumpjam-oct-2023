@@ -1,14 +1,17 @@
 import { resources as resourcesTable } from '@/db/schema';
 import { Resource, ResourceType, Resources } from '.';
+import { getResourceAmounts } from './utils';
 
 export class CraftingData {
     resources: (typeof resourcesTable.$inferSelect)[];
+    resourceAmounts: Record<ResourceType, number>;
     targetResource: ResourceType;
 
     targetResourceMeta: Resource;
 
     constructor(resources: (typeof resourcesTable.$inferSelect)[], targetResource: ResourceType) {
         this.resources = resources;
+        this.resourceAmounts = getResourceAmounts(resources);
         this.targetResource = targetResource;
         this.targetResourceMeta = Resources[targetResource];
     }
@@ -16,10 +19,7 @@ export class CraftingData {
     get maxCraftable(): number {
         return Math.min(
             ...Object.entries(this.targetResourceMeta.crafting!.ingredients).map(([resourceType, amount]) => {
-                const resourceCount =
-                    this.resources.find((r) => r.type === (resourceType as ResourceType))?.amount ?? 0;
-
-                return Math.floor(resourceCount / amount);
+                return Math.floor(this.resourceAmounts[resourceType as ResourceType] / amount);
             }),
         );
     }
