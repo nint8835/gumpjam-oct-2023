@@ -1,4 +1,3 @@
-import ClientProviders from '@/components/client_providers';
 import Navbar from '@/components/navbar';
 import { Toaster } from '@/components/ui/toaster';
 import { ssrGetCurrentUser } from '@/lib/auth';
@@ -17,13 +16,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     return (
         <html lang="en">
             <body className="dark min-h-screen">
-                <ClientProviders>
-                    <div className="flex min-h-screen flex-col">
-                        <Navbar currentUser={currentUser} />
-                        <div className="flex-1">{children}</div>
-                    </div>
-                    <Toaster />
-                </ClientProviders>
+                <div className="flex min-h-screen flex-col">
+                    <Navbar currentUser={currentUser} />
+                    <div className="flex-1">{children}</div>
+                </div>
+                <Toaster />
             </body>
         </html>
     );
