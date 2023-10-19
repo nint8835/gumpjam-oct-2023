@@ -3,8 +3,10 @@
 import TooltipButton from '@/components/tooltip_button';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
-import { ResourceType, Resources } from '@/resources';
+import { cn } from '@/lib/utils';
+import { ResourceCategory, ResourceType, Resources } from '@/resources';
 import { Hammer, Store, Tractor } from 'lucide-react';
 import { useState } from 'react';
 import { CraftResourceDialog } from './craft_dialog';
@@ -32,85 +34,116 @@ export function ResourceTable({
         amount: number;
     } | null>(null);
 
+    const groupedResources = resources
+        .filter((resource) => resource.type !== ResourceType.Money)
+        .reduce(
+            (acc, resource) => {
+                const category = Resources[resource.type].category;
+
+                if (!acc[category]) {
+                    acc[category] = [];
+                }
+
+                acc[category].push(resource);
+
+                return acc;
+            },
+            {} as Record<ResourceCategory, typeof resources>,
+        );
+
     return (
         <>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Resource</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        <TableHead className="text-right">Value</TableHead>
-                        {isOwner && <TableHead className="w-0" />}
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {resources
-                        .filter((resource) => resource.type !== ResourceType.Money)
-                        .map((resource) => (
-                            <TableRow key={resource.type}>
-                                <TableCell>{Resources[resource.type].name}</TableCell>
-                                <TableCell className="text-right">
-                                    {Resources[resource.type].valueString(resource.amount)}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    {Resources[ResourceType.Money].valueString(
-                                        Resources[resource.type].value * resource.amount,
-                                    )}
-                                </TableCell>
-                                {isOwner && (
-                                    <TableCell className="flex flex-row">
-                                        {Resources[resource.type].isManuallyProducable && (
-                                            <TooltipButton tooltip="Produce">
-                                                <Button
-                                                    variant="ghost"
-                                                    onClick={async () => {
-                                                        const resp = await produceResource(resource.type, companyId);
-                                                        if (!resp.success) {
-                                                            toast({
-                                                                title: 'Error producing resource',
-                                                                description: resp.message,
-                                                                variant: 'destructive',
-                                                            });
-                                                        }
-                                                    }}
-                                                >
-                                                    <Tractor className="h-4 w-4" />
-                                                </Button>
-                                            </TooltipButton>
+            <Tabs defaultValue={Object.keys(groupedResources)[0]} className="w-full">
+                <TabsList className={cn('w-full', Object.keys(groupedResources).length === 1 && 'hidden')}>
+                    {Object.keys(groupedResources).map((category) => (
+                        <TabsTrigger key={category} value={category} className="flex-1">
+                            {category}
+                        </TabsTrigger>
+                    ))}
+                </TabsList>
+                {Object.entries(groupedResources).map(([category, resources]) => (
+                    <TabsContent key={category} value={category}>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Resource</TableHead>
+                                    <TableHead className="text-right">Amount</TableHead>
+                                    <TableHead className="text-right">Value</TableHead>
+                                    {isOwner && <TableHead className="w-0" />}
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {resources.map((resource) => (
+                                    <TableRow key={resource.type}>
+                                        <TableCell>{Resources[resource.type].name}</TableCell>
+                                        <TableCell className="text-right">
+                                            {Resources[resource.type].valueString(resource.amount)}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            {Resources[ResourceType.Money].valueString(
+                                                Resources[resource.type].value * resource.amount,
+                                            )}
+                                        </TableCell>
+                                        {isOwner && (
+                                            <TableCell className="flex flex-row">
+                                                {Resources[resource.type].isManuallyProducable && (
+                                                    <TooltipButton tooltip="Produce">
+                                                        <Button
+                                                            variant="ghost"
+                                                            onClick={async () => {
+                                                                const resp = await produceResource(
+                                                                    resource.type,
+                                                                    companyId,
+                                                                );
+                                                                if (!resp.success) {
+                                                                    toast({
+                                                                        title: 'Error producing resource',
+                                                                        description: resp.message,
+                                                                        variant: 'destructive',
+                                                                    });
+                                                                }
+                                                            }}
+                                                        >
+                                                            <Tractor className="h-4 w-4" />
+                                                        </Button>
+                                                    </TooltipButton>
+                                                )}
+                                                {Resources[resource.type].crafting && (
+                                                    <TooltipButton tooltip="Craft">
+                                                        <Button
+                                                            variant="ghost"
+                                                            onClick={() => {
+                                                                setSelectedResource(resource);
+                                                                setCraftDialogOpen(true);
+                                                            }}
+                                                        >
+                                                            <Hammer className="h-4 w-4" />
+                                                        </Button>
+                                                    </TooltipButton>
+                                                )}
+                                                {Resources[resource.type].isSellable && (
+                                                    <TooltipButton tooltip="Sell">
+                                                        <Button
+                                                            variant="ghost"
+                                                            disabled={resource.amount === 0}
+                                                            onClick={() => {
+                                                                setSelectedResource(resource);
+                                                                setSellDialogOpen(true);
+                                                            }}
+                                                        >
+                                                            <Store className="h-4 w-4" />
+                                                        </Button>
+                                                    </TooltipButton>
+                                                )}
+                                            </TableCell>
                                         )}
-                                        {Resources[resource.type].crafting && (
-                                            <TooltipButton tooltip="Craft">
-                                                <Button
-                                                    variant="ghost"
-                                                    onClick={() => {
-                                                        setSelectedResource(resource);
-                                                        setCraftDialogOpen(true);
-                                                    }}
-                                                >
-                                                    <Hammer className="h-4 w-4" />
-                                                </Button>
-                                            </TooltipButton>
-                                        )}
-                                        {Resources[resource.type].isSellable && (
-                                            <TooltipButton tooltip="Sell">
-                                                <Button
-                                                    variant="ghost"
-                                                    disabled={resource.amount === 0}
-                                                    onClick={() => {
-                                                        setSelectedResource(resource);
-                                                        setSellDialogOpen(true);
-                                                    }}
-                                                >
-                                                    <Store className="h-4 w-4" />
-                                                </Button>
-                                            </TooltipButton>
-                                        )}
-                                    </TableCell>
-                                )}
-                            </TableRow>
-                        ))}
-                </TableBody>
-            </Table>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TabsContent>
+                ))}
+            </Tabs>
             <SellResourceDialog
                 open={sellDialogOpen}
                 setOpen={setSellDialogOpen}

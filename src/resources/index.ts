@@ -1,6 +1,7 @@
 export interface Resource {
     name: string;
     type: string;
+    category: ResourceCategory;
 
     isManuallyProducable?: boolean;
     produceTime?: number;
@@ -28,10 +29,16 @@ export enum ResourceType {
     BasicWebsite = 'basic_website',
 }
 
+export enum ResourceCategory {
+    Core = 'Core',
+    Tech = 'Tech',
+}
+
 export const Resources: Record<ResourceType, Resource> = {
     [ResourceType.Money]: {
         name: 'Money',
         type: ResourceType.Money,
+        category: ResourceCategory.Core,
         value: 1,
         valueString: (amount: number) => `$${amount.toLocaleString()}`,
     },
@@ -39,6 +46,7 @@ export const Resources: Record<ResourceType, Resource> = {
     [ResourceType.TechnicalDevelopment]: {
         name: 'Technical Development',
         type: ResourceType.TechnicalDevelopment,
+        category: ResourceCategory.Tech,
         isManuallyProducable: true,
         produceTime: 1,
         isSellable: true,
@@ -49,6 +57,7 @@ export const Resources: Record<ResourceType, Resource> = {
     [ResourceType.HTML]: {
         name: 'HTML',
         type: ResourceType.HTML,
+        category: ResourceCategory.Tech,
         isSellable: true,
         value: 7,
         valueString: (amount: number) => amount.toLocaleString(),
@@ -62,6 +71,7 @@ export const Resources: Record<ResourceType, Resource> = {
     [ResourceType.CSS]: {
         name: 'CSS',
         type: ResourceType.CSS,
+        category: ResourceCategory.Tech,
         isSellable: true,
         value: 7,
         valueString: (amount: number) => amount.toLocaleString(),
@@ -75,6 +85,7 @@ export const Resources: Record<ResourceType, Resource> = {
     [ResourceType.JavaScript]: {
         name: 'JavaScript',
         type: ResourceType.JavaScript,
+        category: ResourceCategory.Tech,
         isSellable: true,
         value: 7,
         valueString: (amount: number) => amount.toLocaleString(),
@@ -88,6 +99,7 @@ export const Resources: Record<ResourceType, Resource> = {
     [ResourceType.BasicWebsite]: {
         name: 'Basic Website',
         type: ResourceType.BasicWebsite,
+        category: ResourceCategory.Tech,
         isSellable: true,
         value: 75,
         valueString: (amount: number) => amount.toLocaleString(),
