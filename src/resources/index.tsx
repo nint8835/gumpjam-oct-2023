@@ -9,7 +9,6 @@ export interface Resource {
     description: React.ReactNode;
 
     isManuallyProducable?: boolean;
-    produceTime?: number;
 
     value: number;
     isSellable?: boolean;
@@ -75,7 +74,6 @@ export const Resources: Record<ResourceType, Resource> = {
         category: ResourceCategory.Tech,
         description: 'Base resource for all tech-based resources.',
         isManuallyProducable: true,
-        produceTime: 1,
         isSellable: true,
         value: 1,
     },
