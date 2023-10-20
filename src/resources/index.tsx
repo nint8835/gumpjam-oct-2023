@@ -1,3 +1,7 @@
+export type CraftingIngredients = {
+    [type in ResourceType]?: number;
+};
+
 export interface Resource {
     name: string;
     type: string;
@@ -11,13 +15,26 @@ export interface Resource {
     isSellable?: boolean;
 
     crafting?: {
-        ingredients: {
-            [type in ResourceType]?: number;
-        };
+        ingredients: CraftingIngredients;
         yield: number;
     };
 
     amountString?: (amount: number) => string;
+
+    mutators?: {
+        craftingCost?: (
+            ingredients: CraftingIngredients,
+            target: ResourceType,
+            resources: Record<ResourceType, number>,
+        ) => CraftingIngredients;
+        craftingYield?: (currentYield: number, target: ResourceType, resources: Record<ResourceType, number>) => number;
+
+        productionYield?: (
+            currentYield: number,
+            target: ResourceType,
+            resources: Record<ResourceType, number>,
+        ) => number;
+    };
 }
 
 export enum ResourceType {

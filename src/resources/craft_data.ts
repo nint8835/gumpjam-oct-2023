@@ -25,12 +25,36 @@ export class CraftingData {
     }
 
     requiredIngredients(amount: number): [ResourceType, number][] {
-        return Object.entries(this.targetResourceMeta.crafting!.ingredients).map(([resourceType, ingredientAmount]) => {
-            return [resourceType as ResourceType, ingredientAmount * amount];
-        });
+        const baseRequirements = Object.values(Resources).reduce(
+            (requirements, resourceMeta) =>
+                resourceMeta.mutators?.craftingCost
+                    ? resourceMeta.mutators?.craftingCost(
+                          structuredClone(requirements),
+                          this.targetResource,
+                          this.resourceAmounts,
+                      )
+                    : requirements,
+            this.targetResourceMeta.crafting!.ingredients,
+        );
+
+        return Object.entries(baseRequirements).map(
+            ([resourceType, ingredientAmount]) => [resourceType, ingredientAmount * amount] as [ResourceType, number],
+        );
     }
 
     yield(amount: number): number {
-        return this.targetResourceMeta.crafting!.yield * amount;
+        return (
+            Object.values(Resources).reduce(
+                (currentYield, resourceMeta) =>
+                    resourceMeta.mutators?.craftingYield
+                        ? resourceMeta.mutators?.craftingYield(
+                              structuredClone(currentYield),
+                              this.targetResource,
+                              this.resourceAmounts,
+                          )
+                        : currentYield,
+                this.targetResourceMeta.crafting!.yield,
+            ) * amount
+        );
     }
 }

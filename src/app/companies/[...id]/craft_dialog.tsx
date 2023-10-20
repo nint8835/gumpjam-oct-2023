@@ -35,7 +35,7 @@ export function CraftResourceDialog({
 
     const { toast } = useToast();
 
-    if (resource === null) {
+    if (resource === null || Resources[resource.type].crafting === undefined) {
         return null;
     }
 

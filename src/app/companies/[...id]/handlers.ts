@@ -4,6 +4,7 @@ import db from '@/db';
 import { ssrGetCurrentUser } from '@/lib/auth';
 import { ResourceType, Resources } from '@/resources';
 import { addResource, craftResource as craftResourceUtil, sellResource as sellResourceUtil } from '@/resources/db';
+import { getResourceAmounts } from '@/resources/utils';
 import { revalidatePath } from 'next/cache';
 
 export async function produceResource(
@@ -18,6 +19,9 @@ export async function produceResource(
 
     const company = await db.query.companies.findFirst({
         where: (companies, { eq }) => eq(companies.id, companyId),
+        with: {
+            resources: true,
+        },
     });
 
     if (!company) {
@@ -32,10 +36,20 @@ export async function produceResource(
         return { success: false, message: 'This resource cannot be manually produced.' };
     }
 
+    const resourceAmounts = getResourceAmounts(company.resources);
+
+    const productionYield = Object.values(Resources).reduce(
+        (currentYield, resourceMeta) =>
+            resourceMeta.mutators?.productionYield
+                ? resourceMeta.mutators?.productionYield(currentYield, resourceType, resourceAmounts)
+                : currentYield,
+        1,
+    );
+
     await addResource({
         company: companyId,
         type: resourceType,
-        amount: 1,
+        amount: productionYield,
     });
 
     revalidatePath(`/companies/${companyId}`);
