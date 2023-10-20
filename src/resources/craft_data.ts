@@ -42,19 +42,21 @@ export class CraftingData {
         );
     }
 
-    yield(amount: number): number {
-        return (
-            Object.values(Resources).reduce(
-                (currentYield, resourceMeta) =>
-                    resourceMeta.mutators?.craftingYield
-                        ? resourceMeta.mutators?.craftingYield(
-                              structuredClone(currentYield),
-                              this.targetResource,
-                              this.resourceAmounts,
-                          )
-                        : currentYield,
-                this.targetResourceMeta.crafting!.yield,
-            ) * amount
+    yield(amount: number): [ResourceType, number][] {
+        const baseYield = Object.values(Resources).reduce(
+            (yieldAmount, resourceMeta) =>
+                resourceMeta.mutators?.craftingYield
+                    ? resourceMeta.mutators?.craftingYield(
+                          structuredClone(yieldAmount),
+                          this.targetResource,
+                          this.resourceAmounts,
+                      )
+                    : yieldAmount,
+            this.targetResourceMeta.crafting!.yield,
+        );
+
+        return Object.entries(baseYield).map(
+            ([resourceType, yieldAmount]) => [resourceType, yieldAmount * amount] as [ResourceType, number],
         );
     }
 }

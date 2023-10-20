@@ -40,10 +40,12 @@ export function CraftResourceDialog({
     }
 
     const craftingData = new CraftingData(allResources, resource.type);
-    const resourceMeta = Resources[resource.type];
 
     const valueDifference =
-        resourceMeta.value * craftingData.yield(amount) -
+        craftingData
+            .yield(amount)
+            .map(([resourceType, resourceAmount]) => Resources[resourceType].value * resourceAmount)
+            .reduce((a, b) => a + b, 0) -
         craftingData
             .requiredIngredients(amount)
             .map(([resourceType, resourceAmount]) => Resources[resourceType].value * resourceAmount)
@@ -76,9 +78,13 @@ export function CraftResourceDialog({
                             ))}
                         </div>
                         <ArrowRight className="m-1" />
-                        <div className="flex flex-1 items-center justify-between">
-                            <div>{resourceMeta.name}</div>
-                            <div>{formatResourceAmount(resource.type, craftingData.yield(amount))}</div>
+                        <div className="flex-1">
+                            {craftingData.yield(amount).map(([resourceType, resourceAmount]) => (
+                                <div key={resourceType} className="flex items-center justify-between">
+                                    <div>{Resources[resourceType].name}</div>
+                                    <div>{formatResourceAmount(resourceType, resourceAmount)}</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>

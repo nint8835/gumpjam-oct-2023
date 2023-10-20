@@ -1,4 +1,4 @@
-export type CraftingIngredients = {
+export type PartialResourceMap = {
     [type in ResourceType]?: number;
 };
 
@@ -15,19 +15,23 @@ export interface Resource {
     isSellable?: boolean;
 
     crafting?: {
-        ingredients: CraftingIngredients;
-        yield: number;
+        ingredients: PartialResourceMap;
+        yield: PartialResourceMap;
     };
 
     amountString?: (amount: number) => string;
 
     mutators?: {
         craftingCost?: (
-            ingredients: CraftingIngredients,
+            ingredients: PartialResourceMap,
             target: ResourceType,
             resources: Record<ResourceType, number>,
-        ) => CraftingIngredients;
-        craftingYield?: (currentYield: number, target: ResourceType, resources: Record<ResourceType, number>) => number;
+        ) => PartialResourceMap;
+        craftingYield?: (
+            currentYield: PartialResourceMap,
+            target: ResourceType,
+            resources: Record<ResourceType, number>,
+        ) => PartialResourceMap;
 
         productionYield?: (
             currentYield: number,
@@ -84,7 +88,9 @@ export const Resources: Record<ResourceType, Resource> = {
             ingredients: {
                 [ResourceType.TechnicalDevelopment]: 5,
             },
-            yield: 1,
+            yield: {
+                [ResourceType.HTML]: 1,
+            },
         },
     },
     [ResourceType.CSS]: {
@@ -98,7 +104,9 @@ export const Resources: Record<ResourceType, Resource> = {
             ingredients: {
                 [ResourceType.TechnicalDevelopment]: 5,
             },
-            yield: 1,
+            yield: {
+                [ResourceType.CSS]: 1,
+            },
         },
     },
     [ResourceType.JavaScript]: {
@@ -112,7 +120,9 @@ export const Resources: Record<ResourceType, Resource> = {
             ingredients: {
                 [ResourceType.TechnicalDevelopment]: 5,
             },
-            yield: 1,
+            yield: {
+                [ResourceType.JavaScript]: 1,
+            },
         },
     },
     [ResourceType.BasicWebsite]: {
@@ -127,7 +137,9 @@ export const Resources: Record<ResourceType, Resource> = {
                 [ResourceType.HTML]: 3,
                 [ResourceType.CSS]: 3,
             },
-            yield: 1,
+            yield: {
+                [ResourceType.BasicWebsite]: 1,
+            },
         },
     },
 };

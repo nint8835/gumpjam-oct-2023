@@ -105,15 +105,17 @@ export async function craftResource({
                 .where(and(eq(resources.companyId, company), eq(resources.type, ingredientType)));
         }
 
-        const yieldAmount = craftingData.yield(amount);
+        const yieldAmounts = craftingData.yield(amount);
 
-        await tx
-            .insert(resources)
-            .values({ companyId: company, type, amount: yieldAmount })
-            .onConflictDoUpdate({
-                target: [resources.companyId, resources.type],
-                set: { amount: sql`${resources.amount} + ${yieldAmount}` },
-            });
+        for (const [yieldType, yieldAmount] of yieldAmounts) {
+            await tx
+                .insert(resources)
+                .values({ companyId: company, type: yieldType, amount: yieldAmount })
+                .onConflictDoUpdate({
+                    target: [resources.companyId, resources.type],
+                    set: { amount: sql`${resources.amount} + ${yieldAmount}` },
+                });
+        }
         return null;
     });
 }
