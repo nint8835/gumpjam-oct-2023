@@ -71,7 +71,12 @@ export function ResourceTable({
                             <TableBody>
                                 {resources.map((resource) => (
                                     <TableRow key={resource.type}>
-                                        <TableCell>{Resources[resource.type].name}</TableCell>
+                                        <TableCell>
+                                            <div>{Resources[resource.type].name}</div>
+                                            <div className="italic text-muted-foreground">
+                                                {Resources[resource.type].description}
+                                            </div>
+                                        </TableCell>
                                         <TableCell className="text-right">
                                             {formatResourceAmount(resource.type, resource.amount)}
                                         </TableCell>

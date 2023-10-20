@@ -2,6 +2,7 @@ export interface Resource {
     name: string;
     type: string;
     category: ResourceCategory;
+    description: React.ReactNode;
 
     isManuallyProducable?: boolean;
     produceTime?: number;
@@ -39,6 +40,7 @@ export const Resources: Record<ResourceType, Resource> = {
         name: 'Money',
         type: ResourceType.Money,
         category: ResourceCategory.Core,
+        description: 'The currency of the game.',
         value: 1,
         amountString: (amount: number) => `$${amount.toLocaleString()}`,
     },
@@ -47,6 +49,7 @@ export const Resources: Record<ResourceType, Resource> = {
         name: 'Technical Development',
         type: ResourceType.TechnicalDevelopment,
         category: ResourceCategory.Tech,
+        description: 'Base resource for all tech-based resources.',
         isManuallyProducable: true,
         produceTime: 1,
         isSellable: true,
@@ -57,6 +60,7 @@ export const Resources: Record<ResourceType, Resource> = {
         name: 'HTML',
         type: ResourceType.HTML,
         category: ResourceCategory.Tech,
+        description: 'HTML code.',
         isSellable: true,
         value: 7,
         crafting: {
@@ -70,6 +74,7 @@ export const Resources: Record<ResourceType, Resource> = {
         name: 'CSS',
         type: ResourceType.CSS,
         category: ResourceCategory.Tech,
+        description: 'CSS code.',
         isSellable: true,
         value: 7,
         crafting: {
@@ -83,6 +88,7 @@ export const Resources: Record<ResourceType, Resource> = {
         name: 'JavaScript',
         type: ResourceType.JavaScript,
         category: ResourceCategory.Tech,
+        description: 'JavaScript code.',
         isSellable: true,
         value: 7,
         crafting: {
@@ -96,6 +102,7 @@ export const Resources: Record<ResourceType, Resource> = {
         name: 'Basic Website',
         type: ResourceType.BasicWebsite,
         category: ResourceCategory.Tech,
+        description: 'A basic, static website.',
         isSellable: true,
         value: 75,
         crafting: {

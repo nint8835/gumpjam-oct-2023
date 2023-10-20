@@ -58,6 +58,7 @@ export function Tree() {
                 dagMode={'td'}
                 dagLevelDistance={50}
                 height={graphHeight}
+                enableNodeDrag={false}
             />
         </div>
     );
