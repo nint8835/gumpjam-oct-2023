@@ -38,13 +38,14 @@ export async function produceResource(
 
     const resourceAmounts = getResourceAmounts(company.resources);
 
-    const productionYield = Object.values(Resources).reduce(
-        (currentYield, resourceMeta) =>
-            resourceMeta.mutators?.productionYield
-                ? resourceMeta.mutators?.productionYield(currentYield, resourceType, resourceAmounts)
-                : currentYield,
-        1,
-    );
+    const productionYield = Object.values(Resources)
+        .filter((resourceMeta) => resourceMeta.mutators?.productionYield !== undefined)
+        .sort((a, b) => a.mutators?.priority! - b.mutators?.priority!)
+        .reduce(
+            (currentYield, resourceMeta) =>
+                resourceMeta.mutators!.productionYield!(currentYield, resourceType, resourceAmounts),
+            1,
+        );
 
     await addResource({
         company: companyId,

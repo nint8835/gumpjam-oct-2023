@@ -22,16 +22,19 @@ export interface Resource {
     amountString?: (amount: number) => string;
 
     mutators?: {
-        craftingCost?: (
-            ingredients: PartialResourceMap,
+        priority: number;
+
+        crafting?: (
+            currentValues: {
+                ingredients: PartialResourceMap;
+                yield: PartialResourceMap;
+            },
             target: ResourceType,
             resources: Record<ResourceType, number>,
-        ) => PartialResourceMap;
-        craftingYield?: (
-            currentYield: PartialResourceMap,
-            target: ResourceType,
-            resources: Record<ResourceType, number>,
-        ) => PartialResourceMap;
+        ) => {
+            ingredients: PartialResourceMap;
+            yield: PartialResourceMap;
+        };
 
         productionYield?: (
             currentYield: number,

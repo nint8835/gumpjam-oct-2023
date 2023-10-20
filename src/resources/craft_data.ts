@@ -1,5 +1,5 @@
 import { resources as resourcesTable } from '@/db/schema';
-import { Resource, ResourceType, Resources } from '.';
+import { PartialResourceMap, Resource, ResourceType, Resources } from '.';
 import { getResourceAmounts } from './utils';
 
 export class CraftingData {
@@ -24,38 +24,35 @@ export class CraftingData {
         );
     }
 
-    requiredIngredients(amount: number): [ResourceType, number][] {
-        const baseRequirements = Object.values(Resources).reduce(
-            (requirements, resourceMeta) =>
-                resourceMeta.mutators?.craftingCost
-                    ? resourceMeta.mutators?.craftingCost(
-                          structuredClone(requirements),
-                          this.targetResource,
-                          this.resourceAmounts,
-                      )
-                    : requirements,
-            this.targetResourceMeta.crafting!.ingredients,
-        );
+    private mutatedCraftingDetails(): {
+        ingredients: PartialResourceMap;
+        yield: PartialResourceMap;
+    } {
+        return Object.values(Resources)
+            .filter((resourceMeta) => resourceMeta.mutators?.crafting !== undefined)
+            .sort((a, b) => a.mutators?.priority! - b.mutators?.priority!)
+            .reduce(
+                (currentAmounts, resourceMeta) =>
+                    resourceMeta.mutators!.crafting!(
+                        structuredClone(currentAmounts),
+                        this.targetResource,
+                        this.resourceAmounts,
+                    ),
+                {
+                    ingredients: this.targetResourceMeta.crafting!.ingredients,
+                    yield: this.targetResourceMeta.crafting!.yield,
+                },
+            );
+    }
 
-        return Object.entries(baseRequirements).map(
+    requiredIngredients(amount: number): [ResourceType, number][] {
+        return Object.entries(this.mutatedCraftingDetails().ingredients).map(
             ([resourceType, ingredientAmount]) => [resourceType, ingredientAmount * amount] as [ResourceType, number],
         );
     }
 
     yield(amount: number): [ResourceType, number][] {
-        const baseYield = Object.values(Resources).reduce(
-            (yieldAmount, resourceMeta) =>
-                resourceMeta.mutators?.craftingYield
-                    ? resourceMeta.mutators?.craftingYield(
-                          structuredClone(yieldAmount),
-                          this.targetResource,
-                          this.resourceAmounts,
-                      )
-                    : yieldAmount,
-            this.targetResourceMeta.crafting!.yield,
-        );
-
-        return Object.entries(baseYield).map(
+        return Object.entries(this.mutatedCraftingDetails().yield).map(
             ([resourceType, yieldAmount]) => [resourceType, yieldAmount * amount] as [ResourceType, number],
         );
     }
