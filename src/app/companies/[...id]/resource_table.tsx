@@ -8,6 +8,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { resources as resourcesTable } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { ResourceCategory, ResourceType, Resources } from '@/resources';
+import { CraftingData } from '@/resources/craft_data';
 import { formatResourceAmount } from '@/resources/utils';
 import { Hammer, Store, Tractor } from 'lucide-react';
 import { useState } from 'react';
@@ -114,6 +115,10 @@ export function ResourceTable({
                                                     <TooltipButton tooltip="Craft">
                                                         <Button
                                                             variant="ghost"
+                                                            disabled={
+                                                                new CraftingData(resources, resource.type)
+                                                                    .maxCraftable === 0
+                                                            }
                                                             onClick={() => {
                                                                 setSelectedResource(resource);
                                                                 setCraftDialogOpen(true);
