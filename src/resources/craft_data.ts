@@ -18,9 +18,9 @@ export class CraftingData {
 
     get maxCraftable(): number {
         return Math.min(
-            ...Object.entries(this.targetResourceMeta.crafting!.ingredients).map(([resourceType, amount]) => {
-                return Math.floor(this.resourceAmounts[resourceType as ResourceType] / amount);
-            }),
+            ...this.requiredIngredients(1).map(([resourceType, amount]) =>
+                Math.floor(this.resourceAmounts[resourceType] / amount),
+            ),
         );
     }
 
