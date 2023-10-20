@@ -19,6 +19,7 @@ export const DiscordOAuthConfig: ModuleOptions<'client_id'> = {
 export const SessionOptions: IronSessionOptions = {
     password: process.env.SESSION_SECRET!,
     cookieName: 'gumpjam_session',
+    ttl: 0,
     cookieOptions: {
         secure: process.env.NODE_ENV === 'production',
     },
