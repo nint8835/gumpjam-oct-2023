@@ -1,8 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import db from '@/db';
 import { ssrGetCurrentUser } from '@/lib/auth';
 import { ResourceType } from '@/resources';
 import { formatResourceAmount, getCompanyValue, getResourceAmounts } from '@/resources/utils';
+import Link from 'next/link';
 import { ResourceTable } from './resource_table';
 
 export default async function CompanyPage({ params }: { params: { id: number } }) {
@@ -65,6 +67,13 @@ export default async function CompanyPage({ params }: { params: { id: number } }
                         </div>
                     </div>
                 </CardContent>
+                {isOwner && (
+                    <CardFooter className="flex flex-row-reverse">
+                        <Button variant="secondary" asChild>
+                            <Link href={`/companies/${params.id}/crafting-tree`}>Crafting Tree</Link>
+                        </Button>
+                    </CardFooter>
+                )}
             </Card>
             <Card>
                 <CardHeader>

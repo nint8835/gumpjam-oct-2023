@@ -1,10 +1,13 @@
 'use client';
+import { resources as resourcesTable } from '@/db/schema';
 import { Resources } from '@/resources';
+import { CraftingData } from '@/resources/craft_data';
 import { useLayoutEffect, useRef, useState } from 'react';
-import ForceGraph from 'react-force-graph-2d';
+import ForceGraph, { ForceGraphMethods } from 'react-force-graph-2d';
 
-export function Tree() {
+export function Tree({ resources }: { resources: (typeof resourcesTable.$inferSelect)[] }) {
     const ref = useRef<HTMLDivElement>(null);
+    const graphRef = useRef<ForceGraphMethods>();
     const [graphHeight, setGraphHeight] = useState(0);
 
     useLayoutEffect(() => {
@@ -18,20 +21,31 @@ export function Tree() {
     const nodes = [];
     const links = [];
 
-    for (const [type, resource] of Object.entries(Resources)) {
+    for (const resource of Object.values(Resources)) {
         const node = {
-            type: type,
+            type: resource.type,
             name: resource.name,
             category: resource.category,
         };
         nodes.push(node);
+    }
 
-        if (resource.crafting) {
-            for (const [ingredient] of Object.entries(resource.crafting.ingredients)) {
+    for (const resource of Object.values(Resources)) {
+        if (!resource.crafting) {
+            continue;
+        }
+
+        const data = new CraftingData(resources, resource.type);
+
+        const yields = data.yield(1);
+        const ingredients = data.requiredIngredients(1);
+
+        for (const [ingredientType] of ingredients) {
+            for (const [yieldType] of yields) {
                 links.push({
-                    source: ingredient,
-                    target: type,
-                    targetNode: node,
+                    source: ingredientType,
+                    target: yieldType,
+                    targetNode: nodes.find((node) => node.type === yieldType),
                 });
             }
         }
@@ -55,10 +69,16 @@ export function Tree() {
                 nodeAutoColorBy="category"
                 graphData={{ nodes, links }}
                 linkColor={() => 'rgba(255,255,255,0.2)'}
+                onDagError={(loopNodeIds) => {}}
                 dagMode={'td'}
                 dagLevelDistance={50}
                 height={graphHeight}
                 enableNodeDrag={false}
+                cooldownTicks={25}
+                onEngineStop={() => graphRef.current!.zoomToFit(400, 200)}
+                linkDirectionalArrowRelPos={1}
+                linkDirectionalArrowLength={3.5}
+                ref={graphRef}
             />
         </div>
     );

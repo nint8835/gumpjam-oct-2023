@@ -4,7 +4,7 @@ export type PartialResourceMap = {
 
 export interface Resource {
     name: string;
-    type: string;
+    type: ResourceType;
     category: ResourceCategory;
     description: React.ReactNode;
 
