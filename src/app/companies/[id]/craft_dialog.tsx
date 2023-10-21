@@ -33,6 +33,12 @@ export function CraftResourceDialog({
         }
     }, [open, setAmount]);
 
+    useEffect(() => {
+        if (resource !== null && Resources[resource.type].crafting?.forbidMultiCraft) {
+            setAmount(1);
+        }
+    }, [resource, setAmount]);
+
     const { toast } = useToast();
 
     if (resource === null || Resources[resource.type].crafting === undefined) {
@@ -58,15 +64,21 @@ export function CraftResourceDialog({
                     <DialogTitle>Craft {Resources[resource.type].name}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                    <Label>Amount</Label>
-                    <div>
-                        <Slider
-                            value={[amount]}
-                            onValueChange={([value]) => setAmount(value)}
-                            max={craftingData.maxCraftable}
-                        />
-                        <div className="flex justify-center pt-1 text-muted-foreground">{amount.toLocaleString()}</div>
-                    </div>
+                    {!Resources[resource.type].crafting?.forbidMultiCraft && (
+                        <>
+                            <Label>Amount</Label>
+                            <div>
+                                <Slider
+                                    value={[amount]}
+                                    onValueChange={([value]) => setAmount(value)}
+                                    max={craftingData.maxCraftable}
+                                />
+                                <div className="flex justify-center pt-1 text-muted-foreground">
+                                    {amount.toLocaleString()}
+                                </div>
+                            </div>
+                        </>
+                    )}
 
                     <div className="flex flex-row items-center justify-between gap-1">
                         <div className="flex-1">

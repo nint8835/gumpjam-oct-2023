@@ -14,6 +14,8 @@ export interface Resource {
     isSellable?: boolean;
 
     crafting?: {
+        forbidMultiCraft?: boolean;
+
         ingredients: PartialResourceMap;
         yield: PartialResourceMap;
     };
