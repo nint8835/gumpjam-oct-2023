@@ -60,6 +60,8 @@ export enum ResourceCategory {
     Tech = 'Tech',
 }
 
+export const ResourceCategoryOrder: ResourceCategory[] = [ResourceCategory.Core, ResourceCategory.Tech];
+
 export const Resources: Record<ResourceType, Resource> = {
     [ResourceType.Money]: {
         name: 'Money',

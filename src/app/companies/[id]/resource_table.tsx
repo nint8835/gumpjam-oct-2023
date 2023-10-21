@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { resources as resourcesTable } from '@/db/schema';
 import { cn } from '@/lib/utils';
-import { ResourceCategory, ResourceType, Resources } from '@/resources';
+import { ResourceCategory, ResourceCategoryOrder, ResourceType, Resources } from '@/resources';
 import { CraftingData } from '@/resources/craft_data';
 import { formatResourceAmount } from '@/resources/utils';
 import { Hammer, Store, Tractor } from 'lucide-react';
@@ -48,17 +48,22 @@ export function ResourceTable({
             {} as Record<ResourceCategory, typeof resources>,
         );
 
+    const sortedResourceGroups = Object.entries(groupedResources).sort(
+        ([a], [b]) =>
+            ResourceCategoryOrder.indexOf(a as ResourceCategory) - ResourceCategoryOrder.indexOf(b as ResourceCategory),
+    );
+
     return (
         <>
-            <Tabs defaultValue={Object.keys(groupedResources)[0]} className="w-full">
-                <TabsList className={cn('w-full', Object.keys(groupedResources).length === 1 && 'hidden')}>
-                    {Object.keys(groupedResources).map((category) => (
+            <Tabs defaultValue={sortedResourceGroups[0][0]} className="w-full">
+                <TabsList className={cn('w-full', sortedResourceGroups.length === 1 && 'hidden')}>
+                    {sortedResourceGroups.map(([category]) => (
                         <TabsTrigger key={category} value={category} className="flex-1">
                             {category}
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                {Object.entries(groupedResources).map(([category, resources]) => (
+                {sortedResourceGroups.map(([category, resources]) => (
                     <TabsContent key={category} value={category}>
                         <Table>
                             <TableHeader>
