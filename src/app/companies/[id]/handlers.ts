@@ -135,7 +135,7 @@ export async function craftResource({
         return { success: false, message: 'This resource cannot be crafted.' };
     }
 
-    if (amount > 1 && !Resources[resourceType].crafting?.forbidMultiCraft) {
+    if (amount > 1 && Resources[resourceType].crafting?.forbidMultiCraft) {
         return { success: false, message: 'This resource cannot be crafted in bulk.' };
     }
 

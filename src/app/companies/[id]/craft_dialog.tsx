@@ -29,15 +29,13 @@ export function CraftResourceDialog({
 
     useEffect(() => {
         if (open) {
-            setAmount(0);
+            if (resource !== null && Resources[resource.type].crafting?.forbidMultiCraft) {
+                setAmount(1);
+            } else {
+                setAmount(0);
+            }
         }
-    }, [open, setAmount]);
-
-    useEffect(() => {
-        if (resource !== null && Resources[resource.type].crafting?.forbidMultiCraft) {
-            setAmount(1);
-        }
-    }, [resource, setAmount]);
+    }, [resource, open, setAmount]);
 
     const { toast } = useToast();
 
@@ -46,14 +44,14 @@ export function CraftResourceDialog({
     }
 
     const craftingData = new CraftingData(allResources, resource.type);
+    const requiredIngredients = craftingData.requiredIngredients(amount);
+    const yieldResources = craftingData.yield(amount);
 
     const valueDifference =
-        craftingData
-            .yield(amount)
+        yieldResources
             .map(([resourceType, resourceAmount]) => Resources[resourceType].value * resourceAmount)
             .reduce((a, b) => a + b, 0) -
-        craftingData
-            .requiredIngredients(amount)
+        requiredIngredients
             .map(([resourceType, resourceAmount]) => Resources[resourceType].value * resourceAmount)
             .reduce((a, b) => a + b, 0);
 
@@ -82,21 +80,29 @@ export function CraftResourceDialog({
 
                     <div className="flex flex-row items-center justify-between gap-1">
                         <div className="flex-1">
-                            {craftingData.requiredIngredients(amount).map(([resourceType, resourceAmount]) => (
-                                <div key={resourceType} className="flex items-center justify-between">
-                                    <div>{Resources[resourceType].name}</div>
-                                    <div>{formatResourceAmount(resourceType, resourceAmount)}</div>
-                                </div>
-                            ))}
+                            {requiredIngredients.length > 0 ? (
+                                requiredIngredients.map(([resourceType, resourceAmount]) => (
+                                    <div key={resourceType} className="flex items-center justify-between">
+                                        <div>{Resources[resourceType].name}</div>
+                                        <div>{formatResourceAmount(resourceType, resourceAmount)}</div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="italic text-muted-foreground">Nothing</div>
+                            )}
                         </div>
                         <ArrowRight className="m-1" />
                         <div className="flex-1">
-                            {craftingData.yield(amount).map(([resourceType, resourceAmount]) => (
-                                <div key={resourceType} className="flex items-center justify-between">
-                                    <div>{Resources[resourceType].name}</div>
-                                    <div>{formatResourceAmount(resourceType, resourceAmount)}</div>
-                                </div>
-                            ))}
+                            {yieldResources.length > 0 ? (
+                                yieldResources.map(([resourceType, resourceAmount]) => (
+                                    <div key={resourceType} className="flex items-center justify-between">
+                                        <div>{Resources[resourceType].name}</div>
+                                        <div>{formatResourceAmount(resourceType, resourceAmount)}</div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="italic text-muted-foreground">Nothing</div>
+                            )}
                         </div>
                     </div>
                 </div>
