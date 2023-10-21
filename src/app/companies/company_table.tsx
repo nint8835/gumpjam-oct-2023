@@ -13,7 +13,11 @@ export function CompanyTable({
 }) {
     const router = useRouter();
 
-    return (
+    return companies.length === 0 ? (
+        <div className="flex w-full flex-row justify-center text-muted-foreground">
+            {"You don't own any companies yet."}
+        </div>
+    ) : (
         <Table>
             <TableHeader>
                 <TableRow>

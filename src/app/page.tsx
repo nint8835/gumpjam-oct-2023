@@ -38,26 +38,32 @@ export default async function HomePage() {
                 <CardContent>
                     <div className="space-y-4">
                         <h3 className="text-xl font-semibold">Global Stats</h3>
-                        <div className="flex flex-row gap-4">
-                            <div className="flex flex-1 flex-col">
-                                <div className="text-sm font-semibold text-muted-foreground">Total Companies</div>
-                                <div className="text-xl font-semibold text-accent-foreground">
-                                    {allCompanies.length.toLocaleString()}
+                        {allCompanies.length === 0 ? (
+                            <div className="flex w-full flex-row justify-center text-muted-foreground">
+                                {"There aren't any companies yet - you could be the first!"}
+                            </div>
+                        ) : (
+                            <div className="flex flex-row gap-4">
+                                <div className="flex flex-1 flex-col">
+                                    <div className="text-sm font-semibold text-muted-foreground">Total Companies</div>
+                                    <div className="text-xl font-semibold text-accent-foreground">
+                                        {allCompanies.length.toLocaleString()}
+                                    </div>
+                                </div>
+                                <div className="flex flex-1 flex-col">
+                                    <div className="text-sm font-semibold text-muted-foreground">Total Value</div>
+                                    <div className="text-xl font-semibold text-accent-foreground">
+                                        {formatResourceAmount(ResourceType.Money, totalValue)}
+                                    </div>
+                                </div>
+                                <div className="flex flex-1 flex-col">
+                                    <div className="text-sm font-semibold text-muted-foreground">Average Value</div>
+                                    <div className="text-xl font-semibold text-accent-foreground">
+                                        {formatResourceAmount(ResourceType.Money, totalValue / allCompanies.length)}
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex flex-1 flex-col">
-                                <div className="text-sm font-semibold text-muted-foreground">Total Value</div>
-                                <div className="text-xl font-semibold text-accent-foreground">
-                                    {formatResourceAmount(ResourceType.Money, totalValue)}
-                                </div>
-                            </div>
-                            <div className="flex flex-1 flex-col">
-                                <div className="text-sm font-semibold text-muted-foreground">Average Value</div>
-                                <div className="text-xl font-semibold text-accent-foreground">
-                                    {formatResourceAmount(ResourceType.Money, totalValue / allCompanies.length)}
-                                </div>
-                            </div>
-                        </div>
+                        )}
 
                         {currentUser !== null && (
                             <>
