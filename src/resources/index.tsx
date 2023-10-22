@@ -88,20 +88,25 @@ export enum ResourceType {
     // Natural Resources
     Wood = 'wood',
     Ore = 'ore',
+    Rock = 'rock',
 
     // Machinery
     Sawmill = 'sawmill',
     Smelter = 'smelter',
+    Stonecutter = 'stonecutter',
 
     // Refined Resources
     Lumber = 'lumber',
     Metal = 'metal',
+    Stone = 'stone',
 
     // Supply Contracts
     WoodContract = 'wood-contract',
     OreContract = 'ore-contract',
+    RockContract = 'rock-contract',
     LumberContract = 'lumber-contract',
     MetalContract = 'metal-contract',
+    StoneContract = 'stone-contract',
 }
 
 export const Resources: Record<ResourceType, Resource> = {
@@ -129,7 +134,16 @@ export const Resources: Record<ResourceType, Resource> = {
         name: 'Ore',
         type: ResourceType.Ore,
         category: ResourceCategory.NaturalResources,
-        description: 'A chunk of raw, unprocessed metal.',
+        description: 'A chunk of raw metal.',
+        value: 5,
+        isManuallyProducable: true,
+        isSellable: true,
+    },
+    [ResourceType.Rock]: {
+        name: 'Rock',
+        type: ResourceType.Rock,
+        category: ResourceCategory.NaturalResources,
+        description: 'A chunk of raw stone.',
         value: 5,
         isManuallyProducable: true,
         isSellable: true,
@@ -178,6 +192,27 @@ export const Resources: Record<ResourceType, Resource> = {
             },
         },
     },
+    [ResourceType.Stonecutter]: {
+        name: 'Stonecutter',
+        type: ResourceType.Stonecutter,
+        category: ResourceCategory.Machinery,
+        description: (
+            <span>
+                Enables processing of <span className="text-accent-foreground">Rock</span> into{' '}
+                <span className="text-accent-foreground">Stone</span>.
+            </span>
+        ),
+        value: 75,
+        isSellable: true,
+        crafting: {
+            ingredients: {
+                [ResourceType.Money]: 100,
+            },
+            yield: {
+                [ResourceType.Stonecutter]: 1,
+            },
+        },
+    },
 
     // Refined Resources
     [ResourceType.Lumber]: {
@@ -213,6 +248,24 @@ export const Resources: Record<ResourceType, Resource> = {
             yield: {
                 [ResourceType.Metal]: 5,
                 [ResourceType.Smelter]: 1,
+            },
+        },
+    },
+    [ResourceType.Stone]: {
+        name: 'Stone',
+        type: ResourceType.Stone,
+        category: ResourceCategory.RefinedResources,
+        description: 'A slab of processed stone.',
+        value: 10,
+        isSellable: true,
+        crafting: {
+            ingredients: {
+                [ResourceType.Rock]: 1,
+                [ResourceType.Stonecutter]: 1,
+            },
+            yield: {
+                [ResourceType.Stone]: 5,
+                [ResourceType.Stonecutter]: 1,
             },
         },
     },
@@ -278,6 +331,36 @@ export const Resources: Record<ResourceType, Resource> = {
             }),
         },
     },
+    [ResourceType.RockContract]: {
+        name: 'Rock Contract',
+        type: ResourceType.RockContract,
+        category: ResourceCategory.SupplyContracts,
+        description: (
+            <span>
+                A contract to supply <span className="text-accent-foreground">Rock</span>.
+            </span>
+        ),
+        value: 100,
+        isSellable: true,
+        crafting: {
+            ingredients: {
+                [ResourceType.Money]: 100,
+            },
+            yield: {
+                [ResourceType.RockContract]: 1,
+            },
+        },
+
+        mutators: {
+            priority: 100,
+
+            crafting: contractMutator({
+                affectedResource: ResourceType.Rock,
+                contractType: ResourceType.RockContract,
+                ingredientCost: 10,
+            }),
+        },
+    },
     [ResourceType.LumberContract]: {
         name: 'Lumber Contract',
         type: ResourceType.LumberContract,
@@ -334,6 +417,36 @@ export const Resources: Record<ResourceType, Resource> = {
             crafting: contractMutator({
                 affectedResource: ResourceType.Metal,
                 contractType: ResourceType.MetalContract,
+                ingredientCost: 10,
+            }),
+        },
+    },
+    [ResourceType.StoneContract]: {
+        name: 'Stone Contract',
+        type: ResourceType.StoneContract,
+        category: ResourceCategory.SupplyContracts,
+        description: (
+            <span>
+                A contract to supply <span className="text-accent-foreground">Stone</span>.
+            </span>
+        ),
+        value: 100,
+        isSellable: true,
+        crafting: {
+            ingredients: {
+                [ResourceType.Money]: 100,
+            },
+            yield: {
+                [ResourceType.StoneContract]: 1,
+            },
+        },
+
+        mutators: {
+            priority: 100,
+
+            crafting: contractMutator({
+                affectedResource: ResourceType.Stone,
+                contractType: ResourceType.StoneContract,
                 ingredientCost: 10,
             }),
         },

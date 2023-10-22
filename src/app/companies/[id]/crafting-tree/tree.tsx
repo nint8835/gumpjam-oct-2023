@@ -24,8 +24,16 @@ export function Tree({ resources }: { resources: (typeof resourcesTable.$inferSe
             return;
         }
 
-        graphRef.current.d3Force('collision', d3.forceCollide(5));
-    }, [graphRef]);
+        const fg = graphRef.current;
+
+        // @ts-ignore
+        fg.d3Force('center', null);
+        // @ts-ignore
+        fg.d3Force('charge', null);
+
+        fg.d3Force('link', d3.forceLink().distance(50));
+        fg.d3Force('collide', d3.forceCollide().radius(10).strength(0.5));
+    });
 
     const nodes = [];
     const links = [];
@@ -88,7 +96,7 @@ export function Tree({ resources }: { resources: (typeof resourcesTable.$inferSe
                 dagLevelDistance={50}
                 height={graphHeight}
                 enableNodeDrag={false}
-                cooldownTicks={50}
+                cooldownTicks={100}
                 onEngineStop={() => graphRef.current!.zoomToFit(400, 200)}
                 linkDirectionalArrowRelPos={1}
                 linkDirectionalArrowLength={3.5}
