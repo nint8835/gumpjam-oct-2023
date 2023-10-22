@@ -12,24 +12,41 @@ export default async function CompaniesPage() {
         redirect('/auth');
     }
 
-    const companies = await db.query.companies.findMany({
+    const ownedCompanies = await db.query.companies.findMany({
         where: (companies, { eq }) => eq(companies.ownerId, currentUser.id),
         with: {
             resources: true,
         },
     });
 
+    const allCompanies = await db.query.companies.findMany({
+        with: {
+            resources: true,
+        },
+    });
+
     return (
-        <Card className="m-4">
-            <CardHeader>
-                <CardTitle>Companies</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <CompanyTable companies={companies} />
-            </CardContent>
-            <CardFooter className="flex flex-row-reverse">
-                <CreateCompanyDialog />
-            </CardFooter>
-        </Card>
+        <div className="space-y-4 p-4">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Your companies</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <CompanyTable companies={ownedCompanies} />
+                </CardContent>
+                <CardFooter className="flex flex-row-reverse">
+                    <CreateCompanyDialog />
+                </CardFooter>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Top companies</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <CompanyTable companies={allCompanies} forRanking />
+                </CardContent>
+            </Card>
+        </div>
     );
 }
