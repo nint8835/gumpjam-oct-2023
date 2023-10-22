@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default async function PresentationRootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
-            <body className="dark h-screen">{children}</body>
+            <body className="dark h-screen overflow-hidden">{children}</body>
         </html>
     );
 }
