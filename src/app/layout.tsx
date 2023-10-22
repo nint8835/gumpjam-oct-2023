@@ -18,7 +18,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <body className="dark h-screen">
                 <div className="h-full">
                     <Navbar currentUser={currentUser} />
-                    <div className="h-[calc(100vh_-_3rem)]">{children}</div>
+                    <div className="h-[calc(100vh_-_3rem)] overflow-scroll">{children}</div>
                 </div>
                 <Toaster />
             </body>

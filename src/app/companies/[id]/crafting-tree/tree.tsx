@@ -2,8 +2,7 @@
 import { resources as resourcesTable } from '@/db/schema';
 import { Resources } from '@/resources';
 import { CraftingData } from '@/resources/craft_data';
-import * as d3 from 'd3';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import ForceGraph, { ForceGraphMethods } from 'react-force-graph-2d';
 
 export function Tree({ resources }: { resources: (typeof resourcesTable.$inferSelect)[] }) {
@@ -18,22 +17,6 @@ export function Tree({ resources }: { resources: (typeof resourcesTable.$inferSe
         const { height } = ref.current.getBoundingClientRect();
         setGraphHeight(height);
     }, []);
-
-    useEffect(() => {
-        if (!graphRef.current) {
-            return;
-        }
-
-        const fg = graphRef.current;
-
-        // @ts-ignore
-        fg.d3Force('center', null);
-        // @ts-ignore
-        fg.d3Force('charge', null);
-
-        fg.d3Force('link', d3.forceLink().distance(50));
-        fg.d3Force('collide', d3.forceCollide().radius(10).strength(0.5));
-    });
 
     const nodes = [];
     const links = [];
@@ -91,9 +74,6 @@ export function Tree({ resources }: { resources: (typeof resourcesTable.$inferSe
                 nodeAutoColorBy="category"
                 graphData={{ nodes, links }}
                 linkColor={() => 'rgba(255,255,255,0.2)'}
-                onDagError={(loopNodeIds) => {}}
-                dagMode={'td'}
-                dagLevelDistance={50}
                 height={graphHeight}
                 enableNodeDrag={false}
                 cooldownTicks={100}
