@@ -252,7 +252,7 @@ export const Resources: Record<ResourceType, Resource> = {
         isSellable: true,
         crafting: {
             ingredients: {
-                [ResourceType.Smelter]: 1,
+                [ResourceType.Stone]: 100,
                 [ResourceType.Wire]: 50,
             },
             yield: {
