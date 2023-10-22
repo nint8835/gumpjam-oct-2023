@@ -1,6 +1,26 @@
+import { contractMutator } from './mutators';
+
 export type PartialResourceMap = {
     [type in ResourceType]?: number;
 };
+
+export type CraftingMutator = (
+    currentValues: {
+        ingredients: PartialResourceMap;
+        yield: PartialResourceMap;
+    },
+    target: ResourceType,
+    resources: Record<ResourceType, number>,
+) => {
+    ingredients: PartialResourceMap;
+    yield: PartialResourceMap;
+};
+
+export type ProductionYieldMutator = (
+    currentYield: number,
+    target: ResourceType,
+    resources: Record<ResourceType, number>,
+) => number;
 
 export interface Resource {
     name: string;
@@ -25,23 +45,9 @@ export interface Resource {
     mutators?: {
         priority: number;
 
-        crafting?: (
-            currentValues: {
-                ingredients: PartialResourceMap;
-                yield: PartialResourceMap;
-            },
-            target: ResourceType,
-            resources: Record<ResourceType, number>,
-        ) => {
-            ingredients: PartialResourceMap;
-            yield: PartialResourceMap;
-        };
+        crafting?: CraftingMutator;
 
-        productionYield?: (
-            currentYield: number,
-            target: ResourceType,
-            resources: Record<ResourceType, number>,
-        ) => number;
+        productionYield?: ProductionYieldMutator;
     };
 }
 
@@ -235,25 +241,11 @@ export const Resources: Record<ResourceType, Resource> = {
         mutators: {
             priority: 100,
 
-            crafting(currentValues, target, resources) {
-                if (resources[ResourceType.WoodContract] === 0) {
-                    return currentValues;
-                }
-
-                if (!(ResourceType.Wood in currentValues.ingredients)) {
-                    return currentValues;
-                }
-
-                currentValues.ingredients[ResourceType.Money] =
-                    (currentValues.ingredients[ResourceType.Money] ?? 0) +
-                    10 * currentValues.ingredients[ResourceType.Wood]!;
-                delete currentValues.ingredients[ResourceType.Wood];
-
-                currentValues.ingredients[ResourceType.WoodContract] = 1;
-                currentValues.yield[ResourceType.WoodContract] = 1;
-
-                return currentValues;
-            },
+            crafting: contractMutator({
+                affectedResource: ResourceType.Wood,
+                contractType: ResourceType.WoodContract,
+                ingredientCost: 10,
+            }),
         },
     },
     [ResourceType.OreContract]: {
@@ -279,32 +271,22 @@ export const Resources: Record<ResourceType, Resource> = {
         mutators: {
             priority: 100,
 
-            crafting(currentValues, target, resources) {
-                if (resources[ResourceType.OreContract] === 0) {
-                    return currentValues;
-                }
-
-                if (!(ResourceType.Ore in currentValues.ingredients)) {
-                    return currentValues;
-                }
-
-                currentValues.ingredients[ResourceType.Money] =
-                    (currentValues.ingredients[ResourceType.Money] ?? 0) +
-                    10 * currentValues.ingredients[ResourceType.Ore]!;
-                delete currentValues.ingredients[ResourceType.Ore];
-
-                currentValues.ingredients[ResourceType.OreContract] = 1;
-                currentValues.yield[ResourceType.OreContract] = 1;
-
-                return currentValues;
-            },
+            crafting: contractMutator({
+                affectedResource: ResourceType.Ore,
+                contractType: ResourceType.OreContract,
+                ingredientCost: 10,
+            }),
         },
     },
     [ResourceType.LumberContract]: {
         name: 'Lumber Contract',
         type: ResourceType.LumberContract,
         category: ResourceCategory.SupplyContracts,
-        description: 'A contract to supply lumber.',
+        description: (
+            <span>
+                A contract to supply <span className="text-accent-foreground">Lumber</span>.
+            </span>
+        ),
         value: 100,
         isSellable: true,
         crafting: {
@@ -319,32 +301,22 @@ export const Resources: Record<ResourceType, Resource> = {
         mutators: {
             priority: 100,
 
-            crafting(currentValues, target, resources) {
-                if (resources[ResourceType.LumberContract] === 0) {
-                    return currentValues;
-                }
-
-                if (!(ResourceType.Lumber in currentValues.ingredients)) {
-                    return currentValues;
-                }
-
-                currentValues.ingredients[ResourceType.Money] =
-                    (currentValues.ingredients[ResourceType.Money] ?? 0) +
-                    10 * currentValues.ingredients[ResourceType.Lumber]!;
-                delete currentValues.ingredients[ResourceType.Lumber];
-
-                currentValues.ingredients[ResourceType.LumberContract] = 1;
-                currentValues.yield[ResourceType.LumberContract] = 1;
-
-                return currentValues;
-            },
+            crafting: contractMutator({
+                affectedResource: ResourceType.Lumber,
+                contractType: ResourceType.LumberContract,
+                ingredientCost: 10,
+            }),
         },
     },
     [ResourceType.MetalContract]: {
         name: 'Metal Contract',
         type: ResourceType.MetalContract,
         category: ResourceCategory.SupplyContracts,
-        description: 'A contract to supply metal.',
+        description: (
+            <span>
+                A contract to supply <span className="text-accent-foreground">Metal</span>.
+            </span>
+        ),
         value: 100,
         isSellable: true,
         crafting: {
@@ -359,25 +331,11 @@ export const Resources: Record<ResourceType, Resource> = {
         mutators: {
             priority: 100,
 
-            crafting(currentValues, target, resources) {
-                if (resources[ResourceType.MetalContract] === 0) {
-                    return currentValues;
-                }
-
-                if (!(ResourceType.Metal in currentValues.ingredients)) {
-                    return currentValues;
-                }
-
-                currentValues.ingredients[ResourceType.Money] =
-                    (currentValues.ingredients[ResourceType.Money] ?? 0) +
-                    10 * currentValues.ingredients[ResourceType.Metal]!;
-                delete currentValues.ingredients[ResourceType.Metal];
-
-                currentValues.ingredients[ResourceType.MetalContract] = 1;
-                currentValues.yield[ResourceType.MetalContract] = 1;
-
-                return currentValues;
-            },
+            crafting: contractMutator({
+                affectedResource: ResourceType.Metal,
+                contractType: ResourceType.MetalContract,
+                ingredientCost: 10,
+            }),
         },
     },
 };
