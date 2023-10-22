@@ -1,15 +1,26 @@
 export default function GameplaySlide() {
     return (
         <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-16">
-            <div className="text-4xl">Idea / Concept</div>
+            <div className="text-4xl">Gameplay</div>
             <div className="text-xl">
                 <ul className="list-disc">
+                    <li>You found one or more companies.</li>
                     <li>
-                        Takes part in a hypothetical future world where being a CEO is simplified to the point where it
-                        is just using a SaaS app.
+                        In each company, you can:
+                        <ul className="ml-8 list-disc">
+                            <li>Manually harvest raw resources.</li>
+                            <li>Sell resources.</li>
+                            <li>Purchase machines to refine resources.</li>
+                            <li>Refine resources.</li>
+                            <li>Craft further refined resources.</li>
+                            <li>
+                                Purchase {'"supply contracts"'}
+                                <ul className="ml-8 list-disc">
+                                    <li>These allow replacing resources in crafting recipes with money.</li>
+                                </ul>
+                            </li>
+                        </ul>
                     </li>
-                    <li>Game is said SaaS app.</li>
-                    <li>The player is a CEO, competing to be the most successful CEO.</li>
                 </ul>
             </div>
         </div>
