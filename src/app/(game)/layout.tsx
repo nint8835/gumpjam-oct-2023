@@ -1,8 +1,8 @@
+import '@/app/globals.css';
 import Navbar from '@/components/navbar';
 import { Toaster } from '@/components/ui/toaster';
 import { ssrGetCurrentUser } from '@/lib/auth';
 import type { Metadata } from 'next';
-import './globals.css';
 
 // TODO: Actual details?
 export const metadata: Metadata = {
