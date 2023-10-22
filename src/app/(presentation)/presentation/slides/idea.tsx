@@ -1,7 +1,7 @@
 export default function IdeaSlide() {
     return (
         <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-16">
-            <div className="text-4xl">Idea / Concept</div>
+            <div className="text-4xl font-semibold">Idea / Concept</div>
             <div className="text-xl">
                 <ul className="list-disc">
                     <li>

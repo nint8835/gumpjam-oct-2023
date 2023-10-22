@@ -25,7 +25,7 @@ const categoryClasses = {
 export default function ContentSlide() {
     return (
         <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-16">
-            <div className="text-4xl">Content</div>
+            <div className="text-4xl font-semibold">Content</div>
             <div className="w-full">
                 <div className="mt-2 flex w-full flex-row gap-4">
                     {Object.values(ResourceCategory).map((category) => (

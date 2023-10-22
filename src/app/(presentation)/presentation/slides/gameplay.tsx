@@ -1,7 +1,7 @@
 export default function GameplaySlide() {
     return (
         <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-16">
-            <div className="text-4xl">Gameplay</div>
+            <div className="text-4xl font-semibold">Gameplay</div>
             <div className="text-xl">
                 <ul className="list-disc">
                     <li>You found one or more companies.</li>
