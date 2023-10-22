@@ -142,7 +142,7 @@ export const Resources: Record<ResourceType, Resource> = {
         category: ResourceCategory.Machinery,
         description: (
             <span>
-                A sawmill. Enables processing of <span className="text-accent-foreground">Wood</span> into{' '}
+                Enables processing of <span className="text-accent-foreground">Wood</span> into{' '}
                 <span className="text-accent-foreground">Lumber</span>.
             </span>
         ),
@@ -163,7 +163,7 @@ export const Resources: Record<ResourceType, Resource> = {
         category: ResourceCategory.Machinery,
         description: (
             <span>
-                A smelter. Enables processing of <span className="text-accent-foreground">Ore</span> into{' '}
+                Enables processing of <span className="text-accent-foreground">Ore</span> into{' '}
                 <span className="text-accent-foreground">Metal</span>.
             </span>
         ),
