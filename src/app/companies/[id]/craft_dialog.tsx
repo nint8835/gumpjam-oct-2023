@@ -44,8 +44,12 @@ export function CraftResourceDialog({
     }
 
     const craftingData = new CraftingData(allResources, resource.type);
-    const requiredIngredients = craftingData.requiredIngredients(amount);
-    const yieldResources = craftingData.yield(amount);
+    const requiredIngredients = craftingData
+        .requiredIngredients(amount)
+        .sort(([a], [b]) => Resources[a].name.localeCompare(Resources[b].name));
+    const yieldResources = craftingData
+        .yield(amount)
+        .sort(([a], [b]) => Resources[a].name.localeCompare(Resources[b].name));
 
     const valueDifference =
         yieldResources

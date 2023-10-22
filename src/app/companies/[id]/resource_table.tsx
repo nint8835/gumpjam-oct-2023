@@ -7,7 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { resources as resourcesTable } from '@/db/schema';
 import { cn } from '@/lib/utils';
-import { ResourceCategory, ResourceCategoryOrder, ResourceType, Resources } from '@/resources';
+import {
+    ResourceCategory,
+    ResourceCategoryDescriptions,
+    ResourceCategoryOrder,
+    ResourceType,
+    Resources,
+} from '@/resources';
 import { CraftingData } from '@/resources/craft_data';
 import { formatResourceAmount } from '@/resources/utils';
 import { Hammer, Store, Tractor } from 'lucide-react';
@@ -56,15 +62,25 @@ export function ResourceTable({
     return (
         <>
             <Tabs defaultValue={sortedResourceGroups[0][0]} className="w-full">
-                <TabsList className={cn('w-full', sortedResourceGroups.length === 1 && 'hidden')}>
+                <TabsList
+                    className={cn(
+                        'h-auto w-full flex-col overflow-scroll md:h-10 md:flex-row',
+                        sortedResourceGroups.length === 1 && 'hidden',
+                    )}
+                >
                     {sortedResourceGroups.map(([category]) => (
-                        <TabsTrigger key={category} value={category} className="flex-1">
+                        <TabsTrigger key={category} value={category} className="w-full flex-1 md:w-fit">
                             {category}
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                {sortedResourceGroups.map(([category, resources]) => (
+                {sortedResourceGroups.map(([category, categoryResources]) => (
                     <TabsContent key={category} value={category}>
+                        {sortedResourceGroups.length > 1 && (
+                            <div className="text-center italic text-muted-foreground">
+                                {ResourceCategoryDescriptions[category as ResourceCategory]}
+                            </div>
+                        )}
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -75,7 +91,7 @@ export function ResourceTable({
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {resources.map((resource) => (
+                                {categoryResources.map((resource) => (
                                     <TableRow key={resource.type}>
                                         <TableCell>
                                             <div>{Resources[resource.type].name}</div>

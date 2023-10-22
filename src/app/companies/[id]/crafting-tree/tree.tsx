@@ -2,7 +2,8 @@
 import { resources as resourcesTable } from '@/db/schema';
 import { Resources } from '@/resources';
 import { CraftingData } from '@/resources/craft_data';
-import { useLayoutEffect, useRef, useState } from 'react';
+import * as d3 from 'd3';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ForceGraph, { ForceGraphMethods } from 'react-force-graph-2d';
 
 export function Tree({ resources }: { resources: (typeof resourcesTable.$inferSelect)[] }) {
@@ -17,6 +18,14 @@ export function Tree({ resources }: { resources: (typeof resourcesTable.$inferSe
         const { height } = ref.current.getBoundingClientRect();
         setGraphHeight(height);
     }, []);
+
+    useEffect(() => {
+        if (!graphRef.current) {
+            return;
+        }
+
+        graphRef.current.d3Force('collision', d3.forceCollide(5));
+    }, [graphRef]);
 
     const nodes = [];
     const links = [];
@@ -41,7 +50,12 @@ export function Tree({ resources }: { resources: (typeof resourcesTable.$inferSe
         const ingredients = data.requiredIngredients(1);
 
         for (const [ingredientType] of ingredients) {
-            for (const [yieldType] of yields) {
+            for (const [yieldType, yieldAmount] of yields) {
+                // Ignore if the recipe produces the same amount of an item as it requires (such as by being a rate-limiting equipment used for a craft)
+                if (ingredients.find(([ingredient]) => ingredient === yieldType)?.[1] === yieldAmount) {
+                    continue;
+                }
+
                 links.push({
                     source: ingredientType,
                     target: yieldType,
@@ -74,7 +88,7 @@ export function Tree({ resources }: { resources: (typeof resourcesTable.$inferSe
                 dagLevelDistance={50}
                 height={graphHeight}
                 enableNodeDrag={false}
-                cooldownTicks={25}
+                cooldownTicks={50}
                 onEngineStop={() => graphRef.current!.zoomToFit(400, 200)}
                 linkDirectionalArrowRelPos={1}
                 linkDirectionalArrowLength={3.5}
